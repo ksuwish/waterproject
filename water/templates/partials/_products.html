@@ -1,0 +1,64 @@
+{% load static %}
+
+<h1  class="display-1 text-center mt-5">Products</h1>
+        <p class="text-center">Log in to place an order.</p>
+
+        <div class="buttons-water">
+            <button class="btn1" data-bs-toggle="modal" data-bs-target="#bigwater-modal">
+                <img src="{% static 'img/bigwater.png' %}" alt="">
+                <span class="label">Water Jug's</span>
+            </button>
+        
+            <button class="btn1" data-bs-toggle="modal" data-bs-target="#waterbottle-modal">
+                <img src="{% static 'img/waterbottle.jpg' %}" alt="">
+                <span class="label">Water Bottle's</span>
+            </button>
+        
+            <button class="btn1" data-bs-toggle="modal" data-bs-target="#mineralwater-modal">
+                <img src="{% static 'img/mineralwater.jpg' %}" alt="">
+                <span class="label">Mineral Water</span>
+            </button>
+        </div>
+        
+        <div class="modal fade" id="bigwater-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">Water Jug's</h5>
+                </div>
+                <div class="modal-body">
+                  {% include 'partials/_bigwater.html' %}
+                </div>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal fade" id="waterbottle-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">PET Bottle's</h5>
+                </div>
+                <div class="modal-body">
+                  {% include "partials/_water.html" %}
+                </div>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal fade" id="mineralwater-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">Mineral Water's</h5>
+                </div>
+                <div class="modal-body">
+                  {% include "partials/_mineralwater.html" %}
+                </div>
+                
+              </div>
+            </div>
+          </div>
+        </div>

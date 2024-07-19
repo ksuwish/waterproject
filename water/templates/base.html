@@ -11,12 +11,14 @@
     </title>
 </head>
 <body>
+
     <ul>
         {% include 'partials/_navbar.html' %}
     </ul>
-
+    
     {% block content%}{% endblock %}
     <script src="{% static 'bootstrap.min.js' %}"></script>
+    <script src="script.js"></script>
     {% block js_files %}{% endblock %}
 </body>
 </html>
