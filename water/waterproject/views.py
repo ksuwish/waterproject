@@ -9,5 +9,5 @@ def index(request):
 def blogs(request):
     return render(request, "main/blogs.html")
 
-def blog_details(request, id):
-    return render(request, "main/blog-details.html", {"id" : id}) 
+def userpage(request,):
+    return render(request, "main/userpage.html") 

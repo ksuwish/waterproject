@@ -5,5 +5,6 @@ urlpatterns = [
     path("",views.index),
     path("index",views.index),
     path("blogs",views.blogs),
-    path("blogs/<int:id>",views.blog_details),
+    path("userpage",views.userpage),
+    
 ]
