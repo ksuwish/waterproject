@@ -14,11 +14,6 @@ def index(request):
 def blogs(request):
     return render(request, "main/blogs.html")
 
-
-@login_required
-def userpage(request):
-    return render(request, "main/userpage.html", {}) 
-
 def authView(request):
     if request.method == "POST":
         form = UserCreationForm(request.POST or None)

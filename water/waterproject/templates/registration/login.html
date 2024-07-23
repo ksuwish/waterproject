@@ -1,5 +1,24 @@
-<form method="POST">
-    {% csrf_token %}
-    {{form}}
-    <button type="submit">Submit</button>
-</form>
+<!DOCTYPE html>
+{% load static %}
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In</title>
+    <link rel="stylesheet" href="{% static 'css/loginpage.css' %}">
+</head>
+<body style="background: url('{% static 'img/layered-waves-haikei.svg' %}') no-repeat center center; background-size: cover;" >
+    <form method="POST" class="login-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="username">Username:</label>
+            {{ form.username }}
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            {{ form.password }}
+        </div>
+        <button type="submit" class="btn-submit">Sign In</button>
+    </form>
+</body>
+</html>
