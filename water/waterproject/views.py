@@ -25,7 +25,6 @@ def authView(request):
 
 class CustomLoginView(LoginView):
     def form_valid(self, form):
-        """If the form is valid, redirect the user based on their role."""
         user = form.get_user()
         login(self.request, user)
 

@@ -1,3 +1,7 @@
+*{
+    font-family: "Rubik";
+}
+
 .carousel-inner img {
     width: 80%;
     height: 700px; 

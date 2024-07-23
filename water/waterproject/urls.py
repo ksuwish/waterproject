@@ -1,6 +1,7 @@
 from django.urls import path, include
 from . import views
 from .views import authView, CustomLoginView
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path("",views.index),
@@ -12,4 +13,5 @@ urlpatterns = [
     path('superuser_dashboard/', views.superuser_dashboard, name='superuser_dashboard'),
     path('staff_dashboard/', views.staff_dashboard, name='staff_dashboard'),
     path('user_dashboard/', views.user_dashboard, name='user_dashboard'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 ]

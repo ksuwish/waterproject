@@ -1,11 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
+   {% load static %}
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link href="{% static 'bootstrap.min.css' %}" rel="stylesheet" id="bootstrap-css">
+   <script src="{% static 'bootstrap.min.js' %}"></script>
+   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css">
+   <link rel="stylesheet" href={% static 'css/staffpage.css' %}>
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+   <title>UserPage</title>
 </head>
 <body>
-    STAFFF
+   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+   <header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">Distributor Panel</a>
+            <div class="d-flex ml-auto align-items-center">
+                {% if user.is_authenticated %}
+                <form action="{% url 'logout' %}" method="post" class="mb-0">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-primary">
+                        <i class="bi bi-box-arrow-right"></i>
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </nav>    
+  </header>
+
 </body>
 </html>

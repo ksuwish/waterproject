@@ -1,0 +1,23 @@
+*{
+    font-family: "Rubik";
+}
+
+body {
+    margin: 0;
+}
+
+header {
+    margin-bottom: 20px;
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+.navbar-nav {
+    margin-left: auto;
+}
+
+.btn i {
+    font-size: 24px;
+}
