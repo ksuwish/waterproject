@@ -1,6 +1,7 @@
 from django.apps import AppConfig
 
-
-class WaterprojectConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
+class WaterProjectConfig(AppConfig):
     name = 'waterproject'
+
+    def ready(self):
+        import waterproject.signals
