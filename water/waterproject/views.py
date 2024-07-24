@@ -54,3 +54,7 @@ def blogs(request):
     mineralwater_category = Category.objects.get(name='mineralwater')
     products = Product.objects.filter(category=mineralwater_category)
     return render(request, 'blogs.html', {'products': products})
+
+def user_dashboard(request):
+    products = Product.objects.all()  # Tüm ürünleri alıyoruz
+    return render(request, 'dashboard/user_dashboard.html', {'products': products})

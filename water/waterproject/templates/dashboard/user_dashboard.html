@@ -11,9 +11,17 @@
         <div class="container">
             <a class="navbar-brand" onclick="showTab('order')" href="#">Make Your Order's</a>
             <div class="d-flex ml-auto align-items-center">
-                <a href="#" class="btn btn-outline-primary me-2 p-2">
-                    <i class="bi bi-cart"></i>
-                </a>
+                <div class="dropdown">
+                    <a href="#" class="btn btn-outline-primary dropdown-toggle me-2" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-cart"></i>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="cartDropdown">
+                        <!-- Sepet öğeleri buraya eklenecek -->
+                        <li><a class="dropdown-item" href="#">Sepet boş</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><button class="dropdown-item" id="orderButton">Sipariş Ver</button></li>
+                    </ul>
+                </div>
                 <div class="dropdown">
                     <a href="#" class="btn btn-outline-primary dropdown-toggle me-2" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi bi-person"></i>
@@ -37,38 +45,177 @@
     </nav>
   </header>
 
-  <div class="container mt-4">
+  <div class="container mt-4"> <!-- personal info ve adress dataları data baseye bağlanıcak, place holderlar değişecek, şifre değiştirme olayları databaseye bağlanacak, -->
       <div id="order" class="tab-content">
-          <h2>Order</h2>
-          <p>Place your order...</p>
+        <h1>Ürünler</h1>
+        <div id="product-container">
+            {% for product in products %}
+            <div class="product-card" data-id="{{ product.id }}" data-name="{{ product.name }}" data-price="{{ product.price }}">
+                <h2>{{ product.name }}</h2>
+                <p>{{ product.description }}</p>
+                <p>{{ product.price }} TL</p>
+                <button class="add-to-cart">Sepete Ekle</button>
+            </div>
+            {% endfor %}
+        </div>
       </div>
+
       <div id="profile" class="tab-content" style="display: none;">
-          <h2>Profile</h2>
-          <p>Your profile information...</p>
-      </div>
+        <div class="container">
+            <div class="card" style="width: 80%;">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Personal Info & Address</h5>
+                    <div class="row">
+                        <!-- Personal Info Section -->
+                        <div class="col-md-6 mb-3">
+                            <h6>Personal Info</h6>
+                            <form>
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Name</label>
+                                    <input type="text" class="form-control" id="name" placeholder="John">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="surname" class="form-label">Surname</label>
+                                    <input type="text" class="form-control" id="surname" placeholder="Doe">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" placeholder="john.doe@example.com">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="phone" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="phone" placeholder="+1234567890">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Gender</label>
+                                    <select class="form-select" id="gender">
+                                        <option selected>Select Gender</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                        <!-- Address Info Section -->
+                        <div class="col-md-6 mb-3">
+                            <h6>Address</h6>
+                            <form>
+                                <div class="mb-3">
+                                    <label for="city" class="form-label">City</label>
+                                    <input type="text" class="form-control" id="city" placeholder="New York">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="district" class="form-label">District</label>
+                                    <input type="text" class="form-control" id="district" placeholder="Manhattan">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="neighbourhood" class="form-label">Neighbourhood</label>
+                                    <input type="text" class="form-control" id="neighbourhood" placeholder="Chelsea">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="street" class="form-label">Street</label>
+                                    <input type="text" class="form-control" id="street" placeholder="5th Avenue">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="no" class="form-label">No</label>
+                                    <input type="text" class="form-control" id="no" placeholder="123">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="apartment" class="form-label">Apartment</label>
+                                    <input type="text" class="form-control" id="apartment" placeholder="4B">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="floor" class="form-label">Floor</label>
+                                    <input type="text" class="form-control" id="floor" placeholder="4">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="number" class="form-label">Number</label>
+                                    <input type="text" class="form-control" id="number" placeholder="101">
+                                </div>
+                                <div class="d-flex justify-content-end p-2">
+                                    <button type="submit" class="btn btn-primary me-2">Save</button>
+                                    <button type="button" class="btn btn-secondary me-2" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                                        Change Password
+                                    </button>
+                                    <button type="button" class="btn btn-warning me-2" onclick="showTab('order')">Cancel</button>
+                                    
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+     </div>
+
       <div id="last-orders" class="tab-content" style="display: none;">
-          <h2>Last Orders</h2>
-          <p>Your last orders...</p>
+        <h2>Last Order's</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Order No</th>
+                    <th>Products</th>
+                    <th>Order Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Sipariş verilerini dinamik olarak ekleyeceğiniz yer -->
+                <!-- Örnek veri: -->
+                <tr>
+                    <td>1</td>
+                    <td>Mineral Su 1</td>
+                    <td>2024-07-15</td>
+                    <td><span class="badge bg-success">Completed</span></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Mineral Su 2</td>
+                    <td>2024-07-16</td>
+                    <td><span class="badge bg-warning text-dark">Pending</span></td>
+                </tr>
+                <!-- Daha fazla sipariş verisi buraya eklenebilir -->
+            </tbody>
+        </table>
       </div>
+      
       <div id="preferences" class="tab-content" style="display: none;">
           <h2>Preferences</h2>
           <p>Your preferences...</p>
       </div>
   </div>
 
-  <script src="{% static 'js/dashboard.js' %}"></script>
-  <script>
-      function showTab(tabId) {
-          var tabs = document.getElementsByClassName('tab-content');
-          for (var i = 0; i < tabs.length; i++) {
-              tabs[i].style.display = 'none';
-          }
-          document.getElementById(tabId).style.display = 'block';
-      }
+  <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="currentPassword" class="form-label">Current Password</label>
+                        <input type="password" class="form-control" id="currentPassword" placeholder="Enter current password">
+                    </div>
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label">New Password</label>
+                        <input type="password" class="form-control" id="newPassword" placeholder="Enter new password">
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                        <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm new password">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-      document.addEventListener('DOMContentLoaded', function() {
-          showTab('order');
-      });
-  </script>
 </body>
 {% endblock %}
