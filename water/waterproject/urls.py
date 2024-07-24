@@ -6,7 +6,7 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     path("",views.index),
     path("index",views.index),
-    path("blogs",views.blogs),
+    path('blogs/', views.blogs, name='blogs'),
     path("accounts/signup/", authView, name= "authView"),
     path("accounts/", include("django.contrib.auth.urls")),
     path('login/', CustomLoginView.as_view(), name='login'),

@@ -6,6 +6,7 @@ from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 from django.contrib.auth import login
 from django.shortcuts import redirect
+from .models import Product, Category
 # Create your views here.
 
 def index(request):
@@ -48,3 +49,8 @@ def staff_dashboard(request):
 @login_required
 def user_dashboard(request):
     return render(request, 'dashboard/user_dashboard.html')
+
+def blogs(request):
+    mineralwater_category = Category.objects.get(name='mineralwater')
+    products = Product.objects.filter(category=mineralwater_category)
+    return render(request, 'blogs.html', {'products': products})

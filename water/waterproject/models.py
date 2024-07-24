@@ -1,13 +1,15 @@
 from django.db import models
-
-# Create your models here.
-from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 
+# Create your models here.
 class Category(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
+    CATEGORY_CHOICES = [
+        ('mineralwater', 'Mineral Water'),
+        ('waterjug', 'Water Jug'),
+        ('waterpet', 'Water Pet'),
+    ]
+    name = models.CharField(max_length=100, choices=CATEGORY_CHOICES)
 
     def __str__(self):
         return self.name
@@ -45,7 +47,7 @@ class Order(models.Model):
         ('Cancelled', 'Cancelled'),
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    products = models.ManyToManyField(Product, through='OrderItem')
+    products = models.ManyToManyField(Product, through='OrderItem')  # `Product` yerine `products`
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -55,8 +57,8 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)  # `Order` yerine `order`
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)  # `Product` yerine `product`
     quantity = models.IntegerField()
 
     def __str__(self):
