@@ -1,19 +1,9 @@
-<!DOCTYPE html>
+{% extends "loginbase.html" %}
 {% load static %}
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In</title>
-    <link href="{% static 'bootstrap.min.css' %}" rel="stylesheet" id="bootstrap-css">
-    <script src="{% static 'bootstrap.min.js' %}"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="{% static 'css/loginpage.css' %}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
-</head>
+
+{%block title%} Login {% endblock %}
+
+{% block content %}
 
 <body style="background: url('{% static 'img/layered-waves-haikei.svg' %}') no-repeat center center; background-size: cover;" >
     
@@ -36,4 +26,5 @@
         <button type="submit" class="btn-submit">Sign In</button>
     </form>
 </body>
-</html>
+
+{% endblock %}
