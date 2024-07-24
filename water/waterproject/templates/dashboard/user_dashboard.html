@@ -19,14 +19,21 @@
    <header>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
-            <a class="navbar-brand" href="#">Make Your Order's</a>
+            <a class="navbar-brand" onclick="showTab('order')" href="#">Make Your Order's</a>
             <div class="d-flex ml-auto align-items-center">
                 <a href="#" class="btn btn-outline-primary me-2">
                     <i class="bi bi-cart"></i>
                 </a>
-                <a href="#" class="btn btn-outline-primary me-2">
-                    <i class="bi bi-person"></i>
-                </a>
+                <div class="dropdown">
+                    <a href="#" class="btn btn-outline-primary dropdown-toggle me-2" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                        <li><a class="dropdown-item" href="#" onclick="showTab('profile')">Profile</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="showTab('last-orders')">Last Orders</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="showTab('preferences')">Preferences</a></li>
+                    </ul>
+                </div>
                 {% if user.is_authenticated %}
                 <form action="{% url 'logout' %}" method="post" class="mb-0">
                     {% csrf_token %}
@@ -37,8 +44,41 @@
                 {% endif %}
             </div>
         </div>
-    </nav>    
+    </nav>
   </header>
 
+  <div class="container mt-4">
+      <div id="order" class="tab-content">
+          <h2>Order</h2>
+          <p>Place your order...</p>
+      </div>
+      <div id="profile" class="tab-content" style="display: none;">
+          <h2>Profile</h2>
+          <p>Your profile information...</p>
+      </div>
+      <div id="last-orders" class="tab-content" style="display: none;">
+          <h2>Last Orders</h2>
+          <p>Your last orders...</p>
+      </div>
+      <div id="preferences" class="tab-content" style="display: none;">
+          <h2>Preferences</h2>
+          <p>Your preferences...</p>
+      </div>
+  </div>
+
+  <script src="{% static 'js/dashboard.js' %}"></script>
+  <script>
+      function showTab(tabId) {
+          var tabs = document.getElementsByClassName('tab-content');
+          for (var i = 0; i < tabs.length; i++) {
+              tabs[i].style.display = 'none';
+          }
+          document.getElementById(tabId).style.display = 'block';
+      }
+
+      document.addEventListener('DOMContentLoaded', function() {
+          showTab('order');
+      });
+  </script>
 </body>
 </html>
