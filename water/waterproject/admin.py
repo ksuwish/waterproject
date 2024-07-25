@@ -1,6 +1,4 @@
-from django.contrib import admin
-
-# Register your models here.
+# admin.py
 from django.contrib import admin
 from .models import Category, Product, UserProfile, Order, OrderItem, Payment, Contact
 
@@ -17,13 +15,13 @@ class UserProfileAdmin(admin.ModelAdmin):
     search_fields = ('user__username', 'email')
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('user', 'total_price', 'status', 'created_at')
-    list_filter = ('status',)
+    list_display = ('user', 'total_price', 'created_at')
     search_fields = ('user__username',)
 
 class OrderItemAdmin(admin.ModelAdmin):
-    list_display = ('order', 'product', 'quantity')
-    search_fields = ('order__user__username', 'product__name')
+    
+    list_display = ('order', 'product_name', 'product_price', 'quantity')
+    search_fields = ('order__user__username', 'product_name')
 
 class PaymentAdmin(admin.ModelAdmin):
     list_display = ('user', 'amount', 'payment_date', 'description')
