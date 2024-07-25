@@ -46,19 +46,34 @@
   </header>
 
   <div class="container mt-4"> <!-- personal info ve adress dataları data baseye bağlanıcak, place holderlar değişecek, şifre değiştirme olayları databaseye bağlanacak, -->
-      <div id="order" class="tab-content">
-        <h1>Ürünler</h1>
-        <div id="product-container">
-            {% for product in products %}
-            <div class="product-card" data-id="{{ product.id }}" data-name="{{ product.name }}" data-price="{{ product.price }}">
-                <h2>{{ product.name }}</h2>
-                <p>{{ product.description }}</p>
-                <p>{{ product.price }} TL</p>
-                <button class="add-to-cart">Sepete Ekle</button>
-            </div>
+    <div id="order" class="tab-content">
+        <div class="container mt-5">
+            <h1 class="text-center mb-4">Ürünler</h1>
+    
+            {% for category in categories %}
+                <h2>{{ category.get_name_display }}</h2>
+                <div class="row mb-5" id="{{ category.name }}-container">
+                    {% for product in category.products.all %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ product.name }}</h5>
+                                <p class="card-text">{{ product.description }}</p>
+                                <p class="card-text">{{ product.price }} TL</p>
+                                <button class="btn btn-primary add-to-cart">Sepete Ekle</button>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p>Bu kategoride ürün bulunmamaktadır.</p>
+                    {% endfor %}
+                </div>
             {% endfor %}
         </div>
-      </div>
+    </div>
 
       <div id="profile" class="tab-content" style="display: none;">
         <div class="container">

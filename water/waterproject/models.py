@@ -10,6 +10,7 @@ class Category(models.Model):
         ('waterpet', 'Water Pet'),
     ]
     name = models.CharField(max_length=100, choices=CATEGORY_CHOICES)
+    description = models.TextField(null=True, blank=True)  # Boş geçilebilir
 
     def __str__(self):
         return self.name

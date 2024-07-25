@@ -56,5 +56,12 @@ def blogs(request):
     return render(request, 'blogs.html', {'products': products})
 
 def user_dashboard(request):
-    products = Product.objects.all()  # Tüm ürünleri alıyoruz
-    return render(request, 'dashboard/user_dashboard.html', {'products': products})
+    # Kategorileri al
+    categories = Category.objects.all()
+    
+    # Her kategori için ürünleri filtrele
+    context = {
+        'categories': categories,
+    }
+    
+    return render(request, 'dashboard/user_dashboard.html', context)
