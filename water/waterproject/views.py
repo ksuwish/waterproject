@@ -6,6 +6,9 @@ from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 from django.contrib.auth import login
 from django.shortcuts import redirect
+from django.http import JsonResponse
+import json
+from django.views.decorators.csrf import csrf_exempt
 from .models import Product, Category, Order, OrderItem, Product
 # Create your views here.
 
@@ -71,32 +74,36 @@ def order_view(request):
     return render(request, 'order.html')
 
 
+@csrf_exempt  # Eğer CSRF korumasını devre dışı bırakmak istiyorsanız, kullanabilirsiniz.
 def create_order(request):
     if request.method == 'POST':
-        cart = request.session.get('cart', [])
-        if not cart:
-            return redirect('home')  # Sepet boşsa ana sayfaya yönlendir
+        try:
+            # Sipariş verilerini al
+            data = json.loads(request.body.decode('utf-8'))
+            cart_data = data.get('cart', [])
+            total_price = data.get('total_price', 0)
 
-        total_price = 0
-        order = Order.objects.create(user=request.user, total_price=total_price)
+            # Kullanıcıyı al
+            user = request.user
+            if not user.is_authenticated:
+                return JsonResponse({'status': 'error', 'message': 'User not authenticated'}, status=403)
 
-        for item in cart:
-            product = Product.objects.get(id=item['id'])  # Ürünü `Product` modelinden al
-            item_price = product.price * item['quantity']  # Toplam fiyatı hesapla
-            total_price += item_price
-            OrderItem.objects.create(
-                order=order,
-                product=product,
-                quantity=item['quantity'],
-                price=product.price
-            )
+            # Yeni siparişi oluştur
+            order = Order.objects.create(user=user, total_price=total_price)
 
-        # Toplam fiyatı güncelle
-        order.total_price = total_price
-        order.save()
+            # Siparişe ürünleri ekle
+            for item in cart_data:
+                OrderItem.objects.create(
+                    order=order,
+                    product_id=item['product_id'],
+                    product_name=item['product_name'],
+                    product_price=item['product_price'],
+                    quantity=item['quantity']
+                )
 
-        request.session['cart'] = []  # Sepeti temizle
-        return redirect('order_success')  # Sipariş başarılı sayfasına yönlendir
-
-    return render(request, 'order.html')
-
+            return JsonResponse({'status': 'success', 'order_id': order.id})
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Invalid JSON'}, status=400)
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=400)

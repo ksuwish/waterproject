@@ -1,17 +1,17 @@
 {% extends "dashboardbase.html" %}
 {% load static %}
 
-{%block title%} Order Page {% endblock %}
+{% block title %} Order Page {% endblock %}
 
 {% block content %}
+<div class="container mt-5">
+    <h1>Your Order</h1>
+    <ul id="orderList" class="list-group mb-3">
+        <!-- Sipariş ürünleri burada görünecek -->
+    </ul>
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    <button class="btn btn-primary" id="confirmOrderButton">Confirm Order</button>
+    <a href="/user_dashboard" class="btn btn-secondary ms-2">Back to Dashboard</a> <!-- Yeni buton eklenmiş -->
+</div>
 
-<body>
-    <div class="container mt-5">
-        <h1>Your Order</h1>
-        <ul id="orderList" class="list-group mb-3">
-            <!-- Sipariş ürünleri burada görünecek -->
-        </ul>
-        <button class="btn btn-primary" id="confirmOrderButton">Confirm Order</button>
-    </div>
-</body>
 {% endblock %}
