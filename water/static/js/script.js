@@ -72,10 +72,17 @@ document.addEventListener('DOMContentLoaded', function() {
         // Remove buttons click event listener
         document.querySelectorAll('.btn-close').forEach(button => {
             button.addEventListener('click', function(event) {
-                event.stopPropagation(); // Tıklama olayını yayılmayı durdurur
                 const index = parseInt(button.getAttribute('data-index'), 10);
+                event.stopPropagation();
                 if (index >= 0 && index < cart.length) {
-                    cart.splice(index, 1);  // Ürünü sepetten çıkar
+                    // Ürünün miktarını bir azalt
+                    cart[index].quantity -= 1;
+
+                    // Eğer miktar 0 ise ürünü sepetten çıkar
+                    if (cart[index].quantity <= 0) {
+                        cart.splice(index, 1);
+                    }
+
                     localStorage.setItem('cart', JSON.stringify(cart)); // Sepeti localStorage'a kaydet
                     updateCartDropdown();  // Sepeti güncelle
                 }
@@ -133,17 +140,17 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function() {
     const orderList = document.getElementById('orderList');
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    
+
     // Sepeti güncelleme fonksiyonu
     function updateOrderList() {
         orderList.innerHTML = ''; // Önceki içerikleri temizle
-    
+
         if (cart.length === 0) {
             orderList.innerHTML = '<li class="list-group-item">Your cart is empty.</li>';
         } else {
             // Toplam fiyatı hesapla
             let totalPrice = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
-    
+
             // Ürünleri listele
             cart.forEach((item, index) => {
                 const listItem = document.createElement('li');
@@ -154,19 +161,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
                 orderList.appendChild(listItem);
             });
-    
+
             // Toplam fiyatı ekle
             const totalItem = document.createElement('li');
             totalItem.className = 'list-group-item d-flex justify-content-between align-items-center';
             totalItem.innerHTML = `<strong>Total:</strong> ${totalPrice.toFixed(2)} TL`;
             orderList.appendChild(totalItem);
-    
+
             // Divider
             const divider = document.createElement('li');
             divider.innerHTML = '<hr class="list-group-divider">';
             orderList.appendChild(divider);
         }
-    
+
         // Çıkarma butonlarına event listener ekle
         document.querySelectorAll('.btn-danger').forEach(button => {
             button.addEventListener('click', function(event) {
@@ -174,60 +181,63 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (index >= 0 && index < cart.length) {
                     // Ürünün miktarını bir azalt
                     cart[index].quantity -= 1;
-    
+
                     // Eğer miktar 0 ise ürünü sepetten çıkar
                     if (cart[index].quantity <= 0) {
                         cart.splice(index, 1);
                     }
-    
+
                     localStorage.setItem('cart', JSON.stringify(cart)); // Sepeti localStorage'a kaydet
                     updateOrderList();  // Sepeti güncelle
                 }
             });
         });
     }
-    
+
     // İlk seferde listeyi güncelle
     updateOrderList();
-    
-  // Confirm Order button click event listener
-  document.getElementById('confirmOrderButton')?.addEventListener('click', function() {
 
-    const storedData = JSON.parse(localStorage.getItem('cart') || '[]');
+    // Confirm Order button click event listener
+    document.getElementById('confirmOrderButton')?.addEventListener('click', function() {
 
-    const cartData = storedData.map(item => ({
-    product_id: item.id,
-    product_name: item.name,
-    product_price: item.price,
-    quantity: item.quantity || 1 // Eğer quantity verisi yoksa varsayılan olarak 1 kullan
-}));
-    const totalPrice = cartData.reduce((total, item) => total + item.product_price * item.quantity, 0);
+        const storedData = JSON.parse(localStorage.getItem('cart') || '[]');
 
-    // Form verilerini POST edin
-    fetch('/create-order/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-        },
-        body: JSON.stringify({
-            cart: cartData,
-            total_price: totalPrice
+        const cartData = storedData.map(item => ({
+            product_id: item.id,
+            product_name: item.name,
+            product_price: item.price,
+            quantity: item.quantity || 1 // Eğer quantity verisi yoksa varsayılan olarak 1 kullan
+        }));
+        const totalPrice = cartData.reduce((total, item) => total + item.product_price * item.quantity, 0);
+
+        // Form verilerini POST edin
+        fetch('/create-order/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({
+                cart: cartData,
+                total_price: totalPrice
+            })
         })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'success') {
-            alert('Order placed successfully! Order ID: ' + data.order_id);
-        } else {
-            alert('Error placing order: ' + data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert('Order placed successfully! Order ID: ' + data.order_id);
+                // Sepeti temizle
+                localStorage.removeItem('cart');
+                // Sepeti güncelle
+                updateOrderList();
+                // Kullanıcıyı /user_dashboard sayfasına yönlendir
+                window.location.href = '/user_dashboard';
+            } else {
+                alert('Error placing order: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
     });
 });
-});
-
-
-

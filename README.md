@@ -13,6 +13,5 @@
 
   
 WORK LIST:
-Sedat:  Adress validation + google map api + ana sayfada düzenlemeler
 Nihal: Database düzenlemeler 
-Adem : user stashboard ( personal info değişimleri- sipariş sekmesinin çalışmasını sağlamak)
+Adem : user stashboard ( personal info değişimleri- sipariş sekmesinin çalışmasını sağlamak) giriş yapmadan user/staff/admin page giriyor düzelt

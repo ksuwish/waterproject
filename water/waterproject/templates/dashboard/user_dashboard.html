@@ -65,7 +65,7 @@
                                  <h5 class="card-title">{{ product.name }}</h5>
                                  <p class="card-text flex-grow-1">{{ product.description }}</p>
                                  <p class="card-text">{{ product.price }} TL</p>
-                                 <button class="btn btn-primary mt-auto add-to-cart">Sepete Ekle</button>
+                                 <button class="btn btn-primary mt-auto add-to-cart">Add to Cart</button>
                              </div>
                          </div>
                          {% empty %}
@@ -83,83 +83,24 @@
         <div class="container">
             <div class="card" style="width: 80%;">
                 <div class="card-body">
-                    <h5 class="card-title mb-4">Personal Info & Address</h5>
+                    
                     <div class="row">
                         <!-- Personal Info Section -->
                         <div class="col-md-6 mb-3">
                             <h6>Personal Info</h6>
-                            <form>
-                                <div class="mb-3">
-                                    <label for="name" class="form-label">Name</label>
-                                    <input type="text" class="form-control" id="name" placeholder="John">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="surname" class="form-label">Surname</label>
-                                    <input type="text" class="form-control" id="surname" placeholder="Doe">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="email" placeholder="john.doe@example.com">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="phone" class="form-label">Phone Number</label>
-                                    <input type="tel" class="form-control" id="phone" placeholder="+1234567890">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Gender</label>
-                                    <select class="form-select" id="gender">
-                                        <option selected>Select Gender</option>
-                                        <option value="male">Male</option>
-                                        <option value="female">Female</option>
-                                        <option value="other">Other</option>
-                                    </select>
-                                </div>
+                            <form method="post">
+                                {% csrf_token %}
+                                {{ personal_info_form.as_p }}
+                                <button type="submit">Save</button>
                             </form>
                         </div>
                         <!-- Address Info Section -->
                         <div class="col-md-6 mb-3">
                             <h6>Address</h6>
-                            <form>
-                                <div class="mb-3">
-                                    <label for="city" class="form-label">City</label>
-                                    <input type="text" class="form-control" id="city" placeholder="New York">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="district" class="form-label">District</label>
-                                    <input type="text" class="form-control" id="district" placeholder="Manhattan">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="neighbourhood" class="form-label">Neighbourhood</label>
-                                    <input type="text" class="form-control" id="neighbourhood" placeholder="Chelsea">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="street" class="form-label">Street</label>
-                                    <input type="text" class="form-control" id="street" placeholder="5th Avenue">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="no" class="form-label">No</label>
-                                    <input type="text" class="form-control" id="no" placeholder="123">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="apartment" class="form-label">Apartment</label>
-                                    <input type="text" class="form-control" id="apartment" placeholder="4B">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="floor" class="form-label">Floor</label>
-                                    <input type="text" class="form-control" id="floor" placeholder="4">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="number" class="form-label">Number</label>
-                                    <input type="text" class="form-control" id="number" placeholder="101">
-                                </div>
-                                <div class="d-flex justify-content-end p-2">
-                                    <button type="submit" class="btn btn-primary me-2">Save</button>
-                                    <button type="button" class="btn btn-secondary me-2" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
-                                        Change Password
-                                    </button>
-                                    <button type="button" class="btn btn-warning me-2" onclick="showTab('order')">Cancel</button>
-                                    
-                                </div>
+                            <form method="post">
+                                {% csrf_token %}
+                                {{ address_info_form.as_p }}
+                                <button type="submit">Save</button>
                             </form>
                         </div>
                     </div>
