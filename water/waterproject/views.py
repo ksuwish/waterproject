@@ -8,6 +8,7 @@ from django.contrib.auth import login
 from django.shortcuts import redirect
 from django.http import JsonResponse
 import json
+from django.http import HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from .models import Product, Category, Order, OrderItem, Product
 # Create your views here.
@@ -40,16 +41,34 @@ class CustomLoginView(LoginView):
             return redirect(reverse_lazy('user_dashboard'))
 
 
+from django.contrib.auth.decorators import user_passes_test
 
-@login_required
+def admin_required(view_func):
+    def _wrapped_view(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return login_required(view_func)(request, *args, **kwargs)
+        if not request.user.is_superuser:
+            return HttpResponseForbidden("You do not have permission to access this page.")
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
+
+def staff_or_admin_required(view_func):
+    def _wrapped_view(request, *args, **kwargs):
+        if request.user.is_staff or request.user.is_superuser:
+            return view_func(request, *args, **kwargs)
+        else:
+            # Yetkisiz kullanıcıları bir hata sayfasına veya ana sayfaya yönlendirebilirsiniz.
+            
+            return HttpResponseForbidden("You do not have permission to access this page.")
+    return _wrapped_view
+
+@admin_required
 def superuser_dashboard(request):
     return render(request, 'dashboard/superuser_dashboard.html')
 
-@login_required
+@staff_or_admin_required
 def staff_dashboard(request):
     return render(request, 'dashboard/staff_dashboard.html')
-
-
 
 def blogs(request):
     mineralwater_category = Category.objects.get(name='mineralwater')
