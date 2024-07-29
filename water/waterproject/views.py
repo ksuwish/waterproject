@@ -129,3 +129,6 @@ def create_order(request):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=400)
 
+def index(request):
+    categories = Category.objects.all()
+    return render(request, 'index.html', {'categories': categories})

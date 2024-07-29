@@ -11,7 +11,8 @@ class Category(models.Model):
     ]
     name = models.CharField(max_length=100, choices=CATEGORY_CHOICES)
     description = models.TextField(null=True, blank=True)  # Boş geçilebilir
-
+    image = models.ImageField(upload_to='categories/', null=True, blank=True)
+    
     def __str__(self):
         return self.name
 

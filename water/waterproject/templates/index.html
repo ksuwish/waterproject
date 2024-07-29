@@ -1,0 +1,66 @@
+    {% extends "base.html" %}
+    {% load static %}
+
+    {%block title%} Homepage {% endblock %}
+
+    {% block content %}
+    
+    <div>
+        {% include "partials/_homepage.html" %}
+    </div>
+    
+    
+    <section id="products">
+        <h1 class="display-1 text-center mt-5 p-5">Products</h1>
+        <p class="text-center">Log in to place an order.</p>
+    
+        <div class="buttons-water">
+            {% for category in categories %}
+                <button class="btn1" data-bs-toggle="modal" data-bs-target="#modal-{{ category.id }}">
+                    <img src="{% if category.image %}{{ category.image.url }}{% else %}/path/to/default-image.jpg{% endif %}" alt="{{ category.name }}">
+                    <span class="label">{{ category.description }}</span>
+                </button>
+                
+                <div class="modal fade" id="modal-{{ category.id }}" tabindex="-1" role="dialog" aria-labelledby="modalTitle-{{ category.id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalTitle-{{ category.id }}">{{ category.description }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="product-list">
+                                    <ul>
+                                        {% for product in category.products.all %}
+                                            <li>
+                                                {% if product.image %}
+                                                    <img src="{{ product.image.url }}" alt="{{ product.description }}">
+                                                {% endif %}
+                                                <span class="product-name">{{ product.description }}</span>
+                                                <span class="price">${{ product.price }}</span>
+                                            </li>
+                                        {% empty %}
+                                            <li>No products available</li>
+                                        {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section id="about">
+        <div>
+            {% include "partials/_aboutus.html" %}
+        </div>
+    </section>
+
+    <section id="help">
+        <div>
+            {% include "partials/_help.html" %}
+        </div>
+    </section>
+    {% endblock %}
