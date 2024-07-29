@@ -49,23 +49,25 @@ def superuser_dashboard(request):
 def staff_dashboard(request):
     return render(request, 'dashboard/staff_dashboard.html')
 
-@login_required
-def user_dashboard(request):
-    return render(request, 'dashboard/user_dashboard.html')
+
 
 def blogs(request):
     mineralwater_category = Category.objects.get(name='mineralwater')
     products = Product.objects.filter(category=mineralwater_category)
     return render(request, 'blogs.html', {'products': products})
 
+@login_required
 def user_dashboard(request):
-    # Kategorileri al
+    user = request.user
+    orders = Order.objects.filter(user=user).order_by('-created_at')
     categories = Category.objects.all()
     
-    # Her kategori için ürünleri filtrele
     context = {
+        'orders': orders,
         'categories': categories,
     }
+
+    
     
     return render(request, 'dashboard/user_dashboard.html', context)
 
@@ -107,3 +109,4 @@ def create_order(request):
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=400)
+

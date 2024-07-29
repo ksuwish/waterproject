@@ -225,13 +225,16 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                alert('Order placed successfully! Order ID: ' + data.order_id);
+                var orderSuccessMessage = document.getElementById('orderSuccessMessage');
+                orderSuccessMessage.classList.remove('d-none');
+                orderSuccessMessage.scrollIntoView();
                 // Sepeti temizle
                 localStorage.removeItem('cart');
                 // Sepeti güncelle
                 updateOrderList();
-                // Kullanıcıyı /user_dashboard sayfasına yönlendir
-                window.location.href = '/user_dashboard';
+                setTimeout(() => {
+                    window.location.href = '/user_dashboard';
+                }, 5000);
             } else {
                 alert('Error placing order: ' + data.message);
             }
@@ -240,4 +243,9 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error:', error);
         });
     });
+});
+
+document.getElementById('logoutForm').addEventListener('submit', function() {
+    localStorage.removeItem('cart');
+    updateOrderList();
 });

@@ -33,12 +33,12 @@
                      </ul>
                  </div>
                  {% if user.is_authenticated %}
-                 <form action="{% url 'logout' %}" method="post" class="mb-0">
-                     {% csrf_token %}
-                     <button type="submit" class="btn btn-outline-primary p-2">
-                         <i class="bi bi-box-arrow-right"></i>
-                     </button>
-                 </form>
+                 <form action="{% url 'logout' %}" method="post" class="mb-0 d-inline" id="logoutForm">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-primary p-2" onclick="clearLocalStorage()">
+                        <i class="bi bi-box-arrow-right"></i>
+                    </button>
+                </form>
                  {% endif %}
              </div>
          </div>
@@ -83,24 +83,83 @@
         <div class="container">
             <div class="card" style="width: 80%;">
                 <div class="card-body">
-                    
+                    <h5 class="card-title mb-4">Personal Info & Address</h5>
                     <div class="row">
                         <!-- Personal Info Section -->
                         <div class="col-md-6 mb-3">
                             <h6>Personal Info</h6>
-                            <form method="post">
-                                {% csrf_token %}
-                                {{ personal_info_form.as_p }}
-                                <button type="submit">Save</button>
+                            <form>
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Name</label>
+                                    <input type="text" class="form-control" id="name" placeholder="John">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="surname" class="form-label">Surname</label>
+                                    <input type="text" class="form-control" id="surname" placeholder="Doe">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" placeholder="john.doe@example.com">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="phone" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="phone" placeholder="+1234567890">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Gender</label>
+                                    <select class="form-select" id="gender">
+                                        <option selected>Select Gender</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
                             </form>
                         </div>
                         <!-- Address Info Section -->
                         <div class="col-md-6 mb-3">
                             <h6>Address</h6>
-                            <form method="post">
-                                {% csrf_token %}
-                                {{ address_info_form.as_p }}
-                                <button type="submit">Save</button>
+                            <form>
+                                <div class="mb-3">
+                                    <label for="city" class="form-label">City</label>
+                                    <input type="text" class="form-control" id="city" placeholder="New York">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="district" class="form-label">District</label>
+                                    <input type="text" class="form-control" id="district" placeholder="Manhattan">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="neighbourhood" class="form-label">Neighbourhood</label>
+                                    <input type="text" class="form-control" id="neighbourhood" placeholder="Chelsea">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="street" class="form-label">Street</label>
+                                    <input type="text" class="form-control" id="street" placeholder="5th Avenue">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="no" class="form-label">No</label>
+                                    <input type="text" class="form-control" id="no" placeholder="123">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="apartment" class="form-label">Apartment</label>
+                                    <input type="text" class="form-control" id="apartment" placeholder="4B">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="floor" class="form-label">Floor</label>
+                                    <input type="text" class="form-control" id="floor" placeholder="4">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="number" class="form-label">Number</label>
+                                    <input type="text" class="form-control" id="number" placeholder="101">
+                                </div>
+                                <div class="d-flex justify-content-end p-2">
+                                    <button type="submit" class="btn btn-primary me-2">Save</button>
+                                    <button type="button" class="btn btn-secondary me-2" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                                        Change Password
+                                    </button>
+                                    <button type="button" class="btn btn-warning me-2" onclick="showTab('order')">Cancel</button>
+                                    
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -114,36 +173,48 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Order No</th>
-                    <th>Products</th>
+                    <th>Order No</th> <!-- Sipariş numarası sütunu -->
                     <th>Order Date</th>
+                    <th>Products</th>
+                    <th>Total</th>
                     <th>Status</th>
                 </tr>
             </thead>
             <tbody>
-                <!-- Sipariş verilerini dinamik olarak ekleyeceğiniz yer -->
-                <!-- Örnek veri: -->
-                <tr>
-                    <td>1</td>
-                    <td>Mineral Su 1</td>
-                    <td>2024-07-15</td>
-                    <td><span class="badge bg-success">Completed</span></td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Mineral Su 2</td>
-                    <td>2024-07-16</td>
-                    <td><span class="badge bg-warning text-dark">Pending</span></td>
-                </tr>
-                <!-- Daha fazla sipariş verisi buraya eklenebilir -->
+                {% if orders %}
+                    {% for order in orders %}
+                        <tr>
+                            <td>{{ order.order_number }}</td> <!-- Sipariş numarasını burada gösteriyoruz -->
+                            <td>{{ order.created_at|date:"d/m/Y" }}</td>
+                            <td>
+                                <ul>
+                                    {% for item in order.items.all %}
+                                        <li>{{ item.product_name }} - {{ item.quantity }} pcs - {{ item.product_price }} ₺ each </li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                            <td>{{ order.total_price|floatformat:2 }} ₺</td>
+                            <td>
+                                {% if order.status == 'completed' %}
+                                    <span class="badge bg-success ">Delivered</span>
+                                {% elif order.status == 'pending' %}
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Not Known</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="5">You don't have any order..</td>
+                    </tr>
+                {% endif %}
             </tbody>
         </table>
+        
       </div>
       
-      <div id="preferences" class="tab-content" style="display: none;">
-          <h2>Preferences</h2>
-          <p>Your preferences...</p>
-      </div>
   </div>
 
   <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">

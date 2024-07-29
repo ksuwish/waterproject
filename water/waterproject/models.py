@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
-
+from django.utils import timezone
 # Create your models here.
 class Category(models.Model):
     CATEGORY_CHOICES = [
@@ -43,11 +43,18 @@ class UserProfile(models.Model):
 
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    total_price = models.FloatField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    created_at = models.DateTimeField(default=timezone.now)
+    order_number = models.PositiveIntegerField(null=True, blank=True)  # Sipariş numarası alanı
 
-    def __str__(self):
-        return f"Order by {self.user.username} - {self.id}"
+    def save(self, *args, **kwargs):
+        if self.pk is None:  # Yeni bir sipariş oluşturuluyorsa
+            last_order = Order.objects.filter(user=self.user).order_by('-created_at').first()
+            if last_order:
+                self.order_number = last_order.order_number + 1
+            else:
+                self.order_number = 1
+        super().save(*args, **kwargs)
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
@@ -67,6 +74,7 @@ class Payment(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.amount} - {self.payment_date}"
+        
 
 
 class Contact(models.Model):

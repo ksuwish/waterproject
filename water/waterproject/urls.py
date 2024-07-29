@@ -18,7 +18,6 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('order/', views.order_view, name='order'),
     path('create-order/', views.create_order, name='create_order'),
-    
 ]
 
 if settings.DEBUG:
