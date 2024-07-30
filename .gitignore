@@ -1,0 +1,3 @@
+# Node artifact files
+.env
+env/
