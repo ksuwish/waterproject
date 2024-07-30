@@ -249,3 +249,45 @@ document.getElementById('logoutForm').addEventListener('submit', function() {
     localStorage.removeItem('cart');
     updateOrderList();
 });
+
+function showContent(contentId) {
+    var contents = document.getElementsByClassName('dynamic-content');
+    for (var i = 0; i < contents.length; i++) {
+        contents[i].style.display = 'none';
+    }
+    document.getElementById(contentId).style.display = 'block';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var form = document.getElementById('productForm');
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();  // Formun normal submit işlemini engelle
+        var formData = new FormData(form);
+
+        fetch("{% url 'add_product' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Modalı kapat ve formu sıfırla
+                var modal = bootstrap.Modal.getInstance(document.getElementById('productModal'));
+                modal.hide();
+                form.reset();
+                // Ürün listesini güncelle (isteğe bağlı)
+                location.reload();  // Tüm sayfayı yenile
+            } else {
+                // Hata mesajını göster
+                alert('Ürün eklenirken bir hata oluştu!');
+            }
+        })
+        .catch(error => {
+            console.error('Hata:', error);
+        });
+    });
+});
+

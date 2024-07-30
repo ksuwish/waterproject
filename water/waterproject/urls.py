@@ -18,6 +18,9 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('order/', views.order_view, name='order'),
     path('create-order/', views.create_order, name='create_order'),
+    path('products/', views.product_list, name='product_list'),
+    path('products/add/', views.add_product, name='add_product'),
+    path('products/edit/<int:pk>/', views.edit_product, name='edit_product'),
 ]
 
 if settings.DEBUG:

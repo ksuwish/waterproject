@@ -1,0 +1,70 @@
+{% load static %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
+
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <!-- Geri Butonu -->
+                <div class="mb-3">
+                    <a href="{% url 'superuser_dashboard' %}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Go Back
+                    </a>
+                </div>
+                
+                <!-- Form Başlangıcı -->
+                <div class="form-container">
+                    <h3 class="text-center mb-4">Add/Edit Product</h3>
+                    <form>
+                        <!-- Ürün Kategorisi -->
+                        <div class="mb-3">
+                            <label for="{{ form.category.id_for_label }}" class="form-label">Category</label>
+                            <select id="{{ form.category.id_for_label }}" name="{{ form.category.html_name }}" class="form-select">
+                                {% for choice in form.category.field.queryset %}
+                                    <option value="{{ choice.pk }}" {% if choice.pk == form.category.value %}selected{% endif %}>{{ choice }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+        
+                        <!-- Ürün Adı -->
+                        <div class="mb-3">
+                            <label for="{{ form.name.id_for_label }}" class="form-label">Product Name</label>
+                            <input type="text" id="{{ form.name.id_for_label }}" name="{{ form.name.html_name }}" class="form-control" value="{{ form.name.value }}">
+                        </div>
+        
+                        <!-- Açıklama -->
+                        <div class="mb-3">
+                            <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+                            <textarea id="{{ form.description.id_for_label }}" name="{{ form.description.html_name }}" class="form-control" rows="4">{{ form.description.value }}</textarea>
+                        </div>
+        
+                        <!-- Fiyat -->
+                        <div class="mb-3">
+                            <label for="{{ form.price.id_for_label }}" class="form-label">Price</label>
+                            <input type="number" id="{{ form.price.id_for_label }}" name="{{ form.price.html_name }}" class="form-control" step="0.01" value="{{ form.price.value }}">
+                        </div>
+        
+                        <!-- Stok -->
+                        <div class="mb-3">
+                            <label for="{{ form.stock.id_for_label }}" class="form-label">Stock</label>
+                            <input type="number" id="{{ form.stock.id_for_label }}" name="{{ form.stock.html_name }}" class="form-control" value="{{ form.stock.value }}">
+                        </div>
+        
+                        <!-- Resim -->
+                        <div class="mb-3">
+                            <label for="{{ form.image.id_for_label }}" class="form-label">Image</label>
+                            <input type="file" id="{{ form.image.id_for_label }}" name="{{ form.image.html_name }}" class="form-control">
+                        </div>
+        
+                        <!-- Kaydet Butonu -->
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </form>
+                </div>
+                <!-- Form Sonu -->
+            </div>
+        </div>
+    </div>
+</body>

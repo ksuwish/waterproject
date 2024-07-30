@@ -14,4 +14,4 @@
   
 WORK LIST:
 Nihal: Database düzenlemeler 
-Adem : user stashboard ( personal info değişimleri- sipariş sekmesinin çalışmasını sağlamak) giriş yapmadan user/staff/admin page giriyor düzelt
+Adem : user stashboard personal info değişimleri admin dashboardGOBR

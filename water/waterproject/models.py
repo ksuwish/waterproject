@@ -61,7 +61,7 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
     product_id = models.CharField(max_length=255)
     product_name = models.CharField(max_length=255)
-    product_price = models.FloatField()
+    product_price = models.IntegerField()
     quantity = models.IntegerField()
 
     def __str__(self):

@@ -5,12 +5,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 from django.contrib.auth import login
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404, redirect
 from django.http import JsonResponse
 import json
 from django.http import HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from .models import Product, Category, Order, OrderItem, Product
+from .forms import ProductForm
 # Create your views here.
 
 def index(request):
@@ -64,7 +65,9 @@ def staff_or_admin_required(view_func):
 
 @admin_required
 def superuser_dashboard(request):
-    return render(request, 'dashboard/superuser_dashboard.html')
+    products = Product.objects.all()
+    return render(request, 'dashboard/superuser_dashboard.html', {'products': products})
+
 
 @staff_or_admin_required
 def staff_dashboard(request):
@@ -132,3 +135,30 @@ def create_order(request):
 def index(request):
     categories = Category.objects.all()
     return render(request, 'index.html', {'categories': categories})
+
+def product_list(request):
+    products = Product.objects.all()
+    return render(request, 'superuser_dashboard.html', {'products': products})
+
+def add_product(request):
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False})
+    else:
+        form = ProductForm()
+    return render(request, 'product_form.html', {'form': form})
+
+def edit_product(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES, instance=product)
+        if form.is_valid():
+            form.save()
+            return redirect('product_list')
+    else:
+        form = ProductForm(instance=product)
+    return render(request, 'product_form.html', {'form': form})
