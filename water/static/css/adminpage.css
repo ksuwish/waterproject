@@ -21,3 +21,11 @@ header {
 .btn i {
     font-size: 24px;
 }
+
+.user-list-container {
+    max-height: 400px; /* Burada yüksekliği ihtiyaca göre ayarlayabilirsiniz */
+    overflow-y: auto; /* Yalnızca dikey kaydırma */
+    border: 1px solid #ddd;
+    border-radius: .25rem;
+    background-color: #f8f9fa;
+}

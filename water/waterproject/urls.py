@@ -4,7 +4,7 @@ from .views import authView, CustomLoginView
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
-
+from .views import user_orders
 urlpatterns = [
     path("", views.index),
     path("index", views.index),
@@ -21,6 +21,7 @@ urlpatterns = [
     path('products/', views.product_list, name='product_list'),
     path('products/add/', views.add_product, name='add_product'),
     path('products/edit/<int:pk>/', views.edit_product, name='edit_product'),
+    path('user-orders/<int:user_id>/', user_orders, name='user_orders'),
 ]
 
 if settings.DEBUG:

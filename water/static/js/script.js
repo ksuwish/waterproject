@@ -291,3 +291,24 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+
+function showUserOrders(userId) {
+    fetch(`/user-orders/${userId}/`)
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('ordersContainer').innerHTML = data;
+        });
+}
+
+document.getElementById('searchInput').addEventListener('input', function() {
+    const filter = this.value.toLowerCase();
+    const items = document.querySelectorAll('#userList .list-group-item');
+    items.forEach(item => {
+        const username = item.textContent.toLowerCase();
+        if (username.includes(filter)) {
+            item.style.display = '';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+});

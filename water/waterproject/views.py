@@ -10,7 +10,7 @@ from django.http import JsonResponse
 import json
 from django.http import HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
-from .models import Product, Category, Order, OrderItem, Product
+from .models import Product, Category, Order, OrderItem, Product, User
 from .forms import ProductForm
 # Create your views here.
 
@@ -67,7 +67,10 @@ def staff_or_admin_required(view_func):
 @admin_required
 def superuser_dashboard(request):
     products = Product.objects.all()
-    return render(request, 'dashboard/superuser_dashboard.html', {'products': products})
+    orders = Order.objects.all().prefetch_related('items').order_by('-created_at')
+    users = User.objects.filter(is_staff=False)
+
+    return render(request, 'dashboard/superuser_dashboard.html', {'products': products, 'orders': orders, 'users': users})
 
 
 @staff_or_admin_required
@@ -163,3 +166,8 @@ def edit_product(request, pk):
     else:
         form = ProductForm(instance=product)
     return render(request, 'product_form.html', {'form': form})
+
+def user_orders(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    orders = Order.objects.filter(user=user).order_by('-created_at')  # Kullanıcının siparişlerini getir
+    return render(request, 'admincontent/user_orders.html', {'orders': orders, 'user': user})

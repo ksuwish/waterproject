@@ -1,0 +1,31 @@
+{% load static %}
+
+<link rel="stylesheet" href={% static 'css/adminpage.css' %}>
+
+<div class="container mt-4">
+    <h1 class="mb-4 d-flex justify-content-between align-items-center">
+        Users
+        <a href="" class="btn btn-primary">Add New User</a>
+    </h1>
+    
+    <!-- Arama Çubuğu -->
+    <form id="searchForm" class="mb-4">
+        <input type="text" class="form-control" id="searchInput" placeholder="Search by username">
+    </form>
+    
+    <div class="user-list-container">
+        <div class="list-group" id="userList">
+            {% for user in users %}
+            <a href="#" class="list-group-item list-group-item-action" onclick="showUserOrders({{ user.id }}); return false;">
+                {{ user.username }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div id="ordersContainer" class="mt-4">
+        <!-- Siparişler burada yüklenecek -->
+    </div>
+</div>
+
+<script src="{% static 'js/script.js' %}"></script>

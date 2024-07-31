@@ -1,0 +1,32 @@
+{% load static %}
+
+<h1 class="mb-4">Orders</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Order Number</th>
+            <th>User</th>
+            <th>Total Price</th>
+            <th>Created At</th>
+            <th>Items</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.id }}</td>
+            <td>{{ order.user.username }}</td>
+            <td>{{ order.total_price }}</td>
+            <td>{{ order.created_at }}</td>
+            <td>
+                <ul>
+                    {% for item in order.items.all %}
+                    <li>{{ item.product_name }} - {{ item.quantity }} pcs</li>
+                    {% endfor %}
+                </ul>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
