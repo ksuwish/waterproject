@@ -15,9 +15,10 @@
                     {% for product in products %}
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             {{ product.name }}
-                            <div class="btn-group1">
-                                <a href="{% url 'edit_product' product.pk %}" class="btn btn-warning btn-sm btn-action">Edit</a>
-                                
+                                <div class="btn-group1">
+                                    
+                                    <a href="{% url 'edit_product' product.pk %}" class="btn btn-warning btn-sm btn-action">Edit</a>
+                                    
                                 <!-- Silme Formu -->
                                 <form action="{% url 'superuser_dashboard' %}" method="POST" style="display: inline;">
                                     {% csrf_token %}

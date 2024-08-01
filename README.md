@@ -13,5 +13,3 @@
 
   
 WORK LIST:
-Nihal: Database düzenlemeler 
-Adem : user stashboard personal info değişimleri admin dashboardGOBR

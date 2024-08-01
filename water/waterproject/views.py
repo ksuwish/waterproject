@@ -49,10 +49,6 @@ class CustomLoginView(LoginView):
         else:
             return redirect(reverse_lazy('user_dashboard'))
 
-
-from django.contrib.auth.decorators import user_passes_test
-
-
 def admin_required(view_func):
     def _wrapped_view(request, *args, **kwargs):
         if not request.user.is_authenticated:
@@ -166,7 +162,7 @@ def index(request):
 
 def product_list(request):
     products = Product.objects.all()
-    return render(request, 'superuser_dashboard.html', {'products': products})
+    return render(request, 'dashboard/superuser_dashboard.html', {'products': products})
 
 
 def add_product(request):
@@ -174,9 +170,7 @@ def add_product(request):
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return JsonResponse({'success': True})
-        else:
-            return JsonResponse({'success': False})
+            return redirect('product_list')  
     else:
         form = ProductForm()
     return render(request, 'product_form.html', {'form': form})
@@ -229,11 +223,13 @@ def category_list(request):
 def edit_category(request, pk):
     category = Category.objects.get(pk=pk)
     if request.method == 'POST':
-        form = CategoryForm(request.POST, instance=category)
+        # Formu POST verileri ve dosyalar ile oluştur
+        form = CategoryForm(request.POST, request.FILES, instance=category)
         if form.is_valid():
             form.save()
             return redirect('category_list')
     else:
+        # Formu sadece model örneği ile oluştur
         form = CategoryForm(instance=category)
 
     context = {
@@ -241,6 +237,7 @@ def edit_category(request, pk):
         'category': category,
     }
     return render(request, 'admincontent/edit_category.html', context)
+
 
 def delete_category(request, pk):
     if request.method == 'POST':
