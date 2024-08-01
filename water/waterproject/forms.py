@@ -1,5 +1,5 @@
 from django import forms
-from .models import Product
+from .models import Product, Category
 
 class ProductForm(forms.ModelForm):
     class Meta:
@@ -14,3 +14,14 @@ class ProductForm(forms.ModelForm):
         self.fields['price'].widget.attrs.update({'class': 'form-control'})
         self.fields['stock'].widget.attrs.update({'class': 'form-control'})
         self.fields['image'].widget.attrs.update({'class': 'form-control'})
+
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ['name', 'description', 'image']
+
+    def __init__(self, *args, **kwargs):
+        super(CategoryForm, self).__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control'})

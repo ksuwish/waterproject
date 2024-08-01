@@ -29,3 +29,12 @@ header {
     border-radius: .25rem;
     background-color: #f8f9fa;
 }
+
+.form-container {
+    max-width: 600px;
+    margin: auto;
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}

@@ -22,6 +22,10 @@ urlpatterns = [
     path('products/add/', views.add_product, name='add_product'),
     path('products/edit/<int:pk>/', views.edit_product, name='edit_product'),
     path('user-orders/<int:user_id>/', user_orders, name='user_orders'),
+    path('add-category/', views.add_category, name='add_category'),
+    path('categories/', views.category_list, name='category_list'),
+    path('categories/edit/<int:pk>/', views.edit_category, name='edit_category'),
+    path('categories/delete/<int:pk>/', views.delete_category, name='delete_category'),
 ]
 
 if settings.DEBUG:

@@ -12,6 +12,7 @@ from django.http import HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from .models import Product, Category, Order, OrderItem, Product, User
 from .forms import ProductForm
+from .forms import CategoryForm
 # Create your views here.
 
 
@@ -66,12 +67,25 @@ def staff_or_admin_required(view_func):
 
 @admin_required
 def superuser_dashboard(request):
+    # Ürün silme işlemi
+    if request.method == 'POST' and 'delete_product' in request.POST:
+        product_id = request.POST.get('product_id')
+        if product_id:
+            product = get_object_or_404(Product, pk=product_id)
+            product.delete()
+            return redirect('superuser_dashboard')
+    
+    # Ürünleri ve diğer verileri al
     products = Product.objects.all()
     orders = Order.objects.all().prefetch_related('items').order_by('-created_at')
     users = User.objects.filter(is_staff=False)
 
-    return render(request, 'dashboard/superuser_dashboard.html', {'products': products, 'orders': orders, 'users': users})
-
+    # Şablona verileri gönder
+    return render(request, 'dashboard/superuser_dashboard.html', {
+        'products': products,
+        'orders': orders,
+        'users': users
+    })
 
 @staff_or_admin_required
 def staff_dashboard(request):
@@ -171,3 +185,54 @@ def user_orders(request, user_id):
     user = get_object_or_404(User, id=user_id)
     orders = Order.objects.filter(user=user).order_by('-created_at')  # Kullanıcının siparişlerini getir
     return render(request, 'admincontent/user_orders.html', {'orders': orders, 'user': user})
+
+def add_category(request):
+    if request.method == 'POST':
+        form = CategoryForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('category_list')  # URL adı 'superuser_dashboard' olmalı
+    else:
+        form = CategoryForm()
+    return render(request, 'admincontent/add_category.html', {'form': form})
+
+
+def category_list(request):
+    categories = Category.objects.all()
+    if request.method == 'POST':
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('category_list')
+    else:
+        form = CategoryForm()
+
+    context = {
+        'categories': categories,
+        'form': form,
+    }
+    return render(request, 'admincontent/category_list.html', context)
+
+def edit_category(request, pk):
+    category = Category.objects.get(pk=pk)
+    if request.method == 'POST':
+        form = CategoryForm(request.POST, instance=category)
+        if form.is_valid():
+            form.save()
+            return redirect('category_list')
+    else:
+        form = CategoryForm(instance=category)
+
+    context = {
+        'form': form,
+        'category': category,
+    }
+    return render(request, 'admincontent/edit_category.html', context)
+
+def delete_category(request, pk):
+    if request.method == 'POST':
+        category = get_object_or_404(Category, pk=pk)
+        category.delete()
+    return redirect('category_list')
+
+
