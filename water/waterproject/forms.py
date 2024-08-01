@@ -1,6 +1,7 @@
 from django import forms
-from .models import Product, Category
-
+from .models import Product
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
@@ -14,6 +15,16 @@ class ProductForm(forms.ModelForm):
         self.fields['price'].widget.attrs.update({'class': 'form-control'})
         self.fields['stock'].widget.attrs.update({'class': 'form-control'})
         self.fields['image'].widget.attrs.update({'class': 'form-control'})
+
+class CustomUserCreationForm(UserCreationForm):
+        first_name = forms.CharField(max_length=30, required=False)
+        last_name = forms.CharField(max_length=30, required=False)
+        email = forms.EmailField(max_length=254, help_text='Required. Inform a valid email address.')
+        phone_number = forms.CharField(max_length=15, required=False)
+
+        class Meta:
+            model = User
+            fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2', 'phone_number')
 
 
 class CategoryForm(forms.ModelForm):
