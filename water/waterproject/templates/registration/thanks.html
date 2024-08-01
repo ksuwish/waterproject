@@ -1,0 +1,15 @@
+{% extends "loginbase.html" %}
+
+{% block title %}Teşekkürler!{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 50px;">
+    <div class="jumbotron text-center">
+        <h1 class="display-4">Teşekkürler!</h1>
+        <p class="lead">Kayıt işleminiz başarıyla tamamlandı.</p>
+        <hr class="my-4">
+        <p>Bizimle birlikte olduğunuz için teşekkür ederiz. Artık giriş yapabilir ve hizmetlerimizi keşfetmeye başlayabilirsiniz.</p>
+        <a class="btn btn-primary btn-lg" href="{% url 'home' %}" role="button">Anasayfaya Dön</a>
+    </div>
+</div>
+{% endblock %}

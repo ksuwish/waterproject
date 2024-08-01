@@ -22,6 +22,7 @@ urlpatterns = [
     path('products/add/', views.add_product, name='add_product'),
     path('products/edit/<int:pk>/', views.edit_product, name='edit_product'),
     path('user-orders/<int:user_id>/', user_orders, name='user_orders'),
+    path('thanks/', views.thanks_page_view, name='thanks_page'),
 ]
 
 if settings.DEBUG:
