@@ -3,16 +3,17 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate
 from django.shortcuts import redirect, get_object_or_404, redirect
 from django.http import JsonResponse
 import json
 from django.http import HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from .models import Product, Category, Order, OrderItem, Product, User
-from .forms import ProductForm
+from .forms import ProductForm, PersonalInfoForm
 from .forms import CategoryForm
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, AddressForm
+from .models import PersonalInfo
 
 
 # Create your views here.
@@ -30,8 +31,14 @@ def authView(request):
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('user_dashboard')
+            user = form.save()  # Yeni kullanıcıyı kaydet
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password1')  # Kullanıcı formundaki şifre alanını kontrol edin
+            # Kullanıcıyı doğrula
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)  # Kullanıcıyı giriş yaptır
+                return redirect('create_personal_info')
     else:
         form = CustomUserCreationForm()
     return render(request, "registration/signup.html", {"form": form})
@@ -48,6 +55,7 @@ class CustomLoginView(LoginView):
             return redirect(reverse_lazy('staff_dashboard'))
         else:
             return redirect(reverse_lazy('user_dashboard'))
+
 
 def admin_required(view_func):
     def _wrapped_view(request, *args, **kwargs):
@@ -81,7 +89,7 @@ def superuser_dashboard(request):
             product = get_object_or_404(Product, pk=product_id)
             product.delete()
             return redirect('superuser_dashboard')
-    
+
     # Ürünleri ve diğer verileri al
     products = Product.objects.all()
     orders = Order.objects.all().prefetch_related('items').order_by('-created_at')
@@ -170,7 +178,7 @@ def add_product(request):
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('product_list')  
+            return redirect('product_list')
     else:
         form = ProductForm()
     return render(request, 'product_form.html', {'form': form})
@@ -192,6 +200,7 @@ def user_orders(request, user_id):
     user = get_object_or_404(User, id=user_id)
     orders = Order.objects.filter(user=user).order_by('-created_at')  # Kullanıcının siparişlerini getir
     return render(request, 'admincontent/user_orders.html', {'orders': orders, 'user': user})
+
 
 def add_category(request):
     if request.method == 'POST':
@@ -220,6 +229,7 @@ def category_list(request):
     }
     return render(request, 'admincontent/category_list.html', context)
 
+
 def edit_category(request, pk):
     category = Category.objects.get(pk=pk)
     if request.method == 'POST':
@@ -246,3 +256,41 @@ def delete_category(request, pk):
     return redirect('category_list')
 
 
+@login_required
+def create_personal_info(request):
+    try:
+        # Mevcut kullanıcının PersonalInfo kaydını al
+        personal_info = PersonalInfo.objects.get(user=request.user)
+    except PersonalInfo.DoesNotExist:
+        # PersonalInfo kaydı yoksa, yeni bir nesne oluştur
+        personal_info = PersonalInfo(
+            user=request.user,
+            name=request.user.first_name,
+            surname=request.user.last_name,
+            phone=request.user.userprofile.phone_number if hasattr(request.user, 'userprofile') else ''
+        )
+
+    if request.method == 'POST':
+        form = PersonalInfoForm(request.POST, instance=personal_info)
+        if form.is_valid():
+            form.save()
+            return redirect('add_address')  # Başarılı işlem sonrası yönlendirme yapabilirsiniz
+    else:
+        form = PersonalInfoForm(instance=personal_info)
+
+    return render(request, 'create_personal_info.html', {'form': form})
+
+
+@login_required
+def add_address_view(request):
+    if request.method == 'POST':
+        form = AddressForm(request.POST)
+        if form.is_valid():
+            address = form.save(commit=False)
+            address.user = request.user
+            address.save()
+            return redirect('user_dashboard')
+    else:
+        form = AddressForm()
+
+    return render(request, 'add_address.html', {'form': form})

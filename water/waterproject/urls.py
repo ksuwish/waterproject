@@ -4,7 +4,8 @@ from .views import authView, CustomLoginView
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import user_orders
+from .views import user_orders, create_personal_info, add_address_view
+
 urlpatterns = [
     path("", views.index),
     path("index", views.index),
@@ -26,6 +27,8 @@ urlpatterns = [
     path('categories/', views.category_list, name='category_list'),
     path('categories/edit/<int:pk>/', views.edit_category, name='edit_category'),
     path('categories/delete/<int:pk>/', views.delete_category, name='delete_category'),
+    path('create-personal-info/', create_personal_info, name='create_personal_info'),
+    path('add-address/', add_address_view, name='add_address'),
 ]
 
 if settings.DEBUG:

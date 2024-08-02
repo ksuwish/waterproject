@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.utils import timezone
+from django.conf import settings
+
+
 # Create your models here.
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -24,19 +27,6 @@ class Product(models.Model):
         return self.name
 
 
-class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    username = models.CharField(max_length=100)
-    usersurname = models.CharField(max_length=100)
-    phone_number = models.CharField(max_length=15)
-    address = models.TextField()
-    email = models.EmailField()
-    location = models.CharField(max_length=100, null=True, blank=True)
-
-    def __str__(self):
-        return self.user.username
-
-
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -52,6 +42,7 @@ class Order(models.Model):
                 self.order_number = 1
         super().save(*args, **kwargs)
 
+
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
     product_id = models.CharField(max_length=255)
@@ -62,6 +53,7 @@ class OrderItem(models.Model):
     def __str__(self):
         return f"{self.product_name} - {self.quantity} pcs"
 
+
 class Payment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='payments')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -70,7 +62,6 @@ class Payment(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.amount} - {self.payment_date}"
-        
 
 
 class Contact(models.Model):
@@ -80,3 +71,33 @@ class Contact(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class PersonalInfo(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100, blank=True, null=True)
+    surname = models.CharField(max_length=100, blank=True, null=True)
+    email = models.EmailField(max_length=254, unique=True, blank=True, null=True)
+    phone = models.CharField(max_length=20, blank=True, null=True)
+    gender = models.CharField(max_length=10, blank=True, null=True,
+                              choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')])
+
+    def __str__(self):
+        return f"{self.name} {self.surname}"
+
+
+class Address(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='addresses')
+    city = models.CharField(max_length=100, verbose_name='City')  # Örnek: Balıkesir
+    district = models.CharField(max_length=100, verbose_name='District')  # Örnek: Karesi
+    neighborhood = models.CharField(max_length=100, verbose_name='Neighborhood')  # Örnek: 2.Sakarya Mah.
+    street = models.CharField(max_length=255, verbose_name='Street')  # Örnek: 4020 Sk.
+    building_number = models.CharField(max_length=10, verbose_name='Building Number')  # Örnek: No:55
+    floor = models.CharField(max_length=10, verbose_name='Floor')  # Örnek: Kat:2
+    postal_code = models.CharField(max_length=20, verbose_name='Postal Code', blank=True, null=True)
+    country = models.CharField(max_length=100, default='Turkey', verbose_name='Country')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        self.country_ = f"{self.building_number}, {self.street}, {self.neighborhood}, {self.district}, {self.city}, {self.country}"
+        return self.country_

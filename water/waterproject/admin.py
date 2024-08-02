@@ -1,6 +1,6 @@
 # admin.py
 from django.contrib import admin
-from .models import Category, Product, UserProfile, Order, OrderItem, Payment, Contact
+from .models import Category, Product, Order, OrderItem, Payment, Contact
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'description', 'image')
@@ -33,7 +33,6 @@ class ContactAdmin(admin.ModelAdmin):
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Product, ProductAdmin)
-admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(OrderItem, OrderItemAdmin)
 admin.site.register(Payment, PaymentAdmin)
