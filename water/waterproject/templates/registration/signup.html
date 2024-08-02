@@ -1,30 +1,41 @@
 {% extends "loginbase.html" %}
 {% load static %}
+{% load custom_filters %}
+
 
 {% block title %} Register {% endblock %}
 
 {% block content %}
-<div style="background: url('{% static 'img/layered-waves-haikei.svg' %}') no-repeat center center; background-size: cover;">
-    <header class="backbutton">
-        <button type="button" class="btn btn-outline-primary" onclick="window.history.back();">
-            <i class="bi bi-arrow-left"></i> Back
-        </button>
-    </header>
+<div class="container-fluid vh-100 d-flex justify-content-center align-items-center position-relative" style="background: url('{% static 'img/layered-waves-haikei.svg' %}') no-repeat center center; background-size: cover;">
+    <!-- Back Button Positioned at the Top Right -->
+    <button type="button" class="btn btn-outline-primary position-absolute top-0 end-0 m-3" onclick="window.history.back();">
+        <i class="bi bi-arrow-left"></i> Back
+    </button>
 
-    <form method="POST" class="login-form">
-        {% csrf_token %}
-        {{ form.non_field_errors }}
-        {% for field in form %}
-        <div class="form-group">
-            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-            {{ field }}
-            {% if field.help_text %}
-            <small class="form-text text-muted">{{ field.help_text }}</small>
-            {% endif %}
-            {{ field.errors }}
+    <!-- Center the form using flexbox with additional right margin -->
+    <div class="row w-100 justify-content-center" style="margin-left: 7%;">
+        <div class="col-12 col-md-6 col-lg-4">
+            <form method="POST" class="login-form bg-light p-4 rounded shadow">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                {% for field in form %}
+                <div class="mb-3">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                    {{ field|add_class:"form-control" }}
+                    {% if field.help_text %}
+                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                    {% endif %}
+                    <div class="text-danger">
+                        {{ field.errors }}
+                    </div>
+                </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary w-100">Next</button>
+            </form>
         </div>
-        {% endfor %}
-        <input type="submit" class="btn btn-primary" value="Next">
-    </form>
+    </div>
 </div>
+
+
+
 {% endblock %}
