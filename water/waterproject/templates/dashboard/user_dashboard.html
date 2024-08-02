@@ -1,177 +1,190 @@
 {% extends "dashboardbase.html" %}
 {% load static %}
 
-{%block title%} Order Page {% endblock %}
+{% block title %} Order Page {% endblock %}
 
 {% block content %}
 
-<body>
+    <body>
     <header>
-     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-         <div class="container">
-             <a class="navbar-brand" onclick="showTab('order')" href="#">Make Your Order's</a>
-             <div class="d-flex ml-auto align-items-center">
-                 <div class="dropdown">
-                     <a href="#" class="btn btn-outline-primary dropdown-toggle me-2" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                         <i class="bi bi-cart"></i>
-                     </a>
-                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="cartDropdown">
-                         <!-- Sepet öğeleri buraya eklenecek -->
-                         <li><a class="dropdown-item" href="#">Sepet boş</a></li>
-                         <li><hr class="dropdown-divider"></li>
-                         <li><button class="dropdown-item" id="orderButton">Sipariş Ver</button></li>
-                     </ul>
-                 </div>
-                 <div class="dropdown">
-                     <a href="#" class="btn btn-outline-primary dropdown-toggle me-2" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                         <i class="bi bi-person"></i>
-                     </a>
-                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                         <li><a class="dropdown-item" href="#" onclick="showTab('profile')">Profile</a></li>
-                         <li><a class="dropdown-item" href="#" onclick="showTab('last-orders')">Last Orders</a></li>
-                         <li><a class="dropdown-item" href="#" onclick="showTab('preferences')">Preferences</a></li>
-                     </ul>
-                 </div>
-                 {% if user.is_authenticated %}
-                 <form action="{% url 'logout' %}" method="post" class="mb-0 d-inline" id="logoutForm">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-outline-primary p-2" onclick="clearLocalStorage()">
-                        <i class="bi bi-box-arrow-right"></i>
-                    </button>
-                </form>
-                 {% endif %}
-             </div>
-         </div>
-     </nav>
-   </header>
- 
-   <div class="container mt-4">
-     <div id="order" class="tab-content">
-         <div class="container mt-5">
-             <h1 class="text-center mb-4">Products</h1>
-     
-             {% for category in categories %}
-             <h2>{{ category.get_name_display }}</h2>
-             <div class="position-relative mb-5">
- 
-                 <div class="overflow-auto">
-                     <div class="d-flex flex-nowrap mt-" id="carousel-{{ category.name }}">
-                         {% for product in category.products.all %}
-                         <div class="card me-3 product-card mt-3" data-id="{{ product.id }}" data-name="{{ product.name }}" data-price="{{ product.price }}" style="flex: 0 0 auto; width: 18rem;">
-                             {% if product.image %}
-                                 <img src="{{ product.image.url }}" class="card-img-top img-fluid" alt="{{ product.name }}" style="max-height: 200px; object-fit: contain;">
-                             {% endif %}
-                             <div class="card-body d-flex flex-column">
-                                 <h5 class="card-title">{{ product.name }}</h5>
-                                 <p class="card-text flex-grow-1">{{ product.description }}</p>
-                                 <p class="card-text">{{ product.price }} TL</p>
-                                 <button class="btn btn-primary mt-auto add-to-cart">Add to Cart</button>
-                             </div>
-                         </div>
-                         {% empty %}
-                         <p>Bu kategoride ürün bulunmamaktadır.</p>
-                         {% endfor %}
-                     </div>
-                 </div>
-             </div>
-         {% endfor %}
- 
-        </div>
-    </div>
-
-      <div id="profile" class="tab-content" style="display: none;">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
-            <div class="card" style="width: 80%;">
-                <div class="card-body">
-                    <h5 class="card-title mb-4">Personal Info & Address</h5>
-                    <div class="row">
-                        <!-- Personal Info Section -->
-                        <div class="col-md-6 mb-3">
-                            <h6>Personal Info</h6>
-                            <form>
-                                <div class="mb-3">
-                                    <label for="name" class="form-label">Name</label>
-                                    <input type="text" class="form-control" id="name" placeholder="John">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="surname" class="form-label">Surname</label>
-                                    <input type="text" class="form-control" id="surname" placeholder="Doe">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="email" placeholder="john.doe@example.com">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="phone" class="form-label">Phone Number</label>
-                                    <input type="tel" class="form-control" id="phone" placeholder="+1234567890">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Gender</label>
-                                    <select class="form-select" id="gender">
-                                        <option selected>Select Gender</option>
-                                        <option value="male">Male</option>
-                                        <option value="female">Female</option>
-                                        <option value="other">Other</option>
-                                    </select>
-                                </div>
-                            </form>
+            <a class="navbar-brand" onclick="showTab('order')" href="#">Make Your Order's</a>
+            <div class="d-flex ml-auto align-items-center">
+                <div class="dropdown me-2">
+                    <a href="#" class="btn btn-outline-primary dropdown-toggle" id="dropdownMenuButton"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-cart"></i>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="cartDropdown">
+                        <!-- Sepet öğeleri buraya eklenecek -->
+                        <li><a class="dropdown-item" href="#">Sepet boş</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <button class="dropdown-item" id="orderButton">Sipariş Ver</button>
+                        </li>
+                    </ul>
+                </div>
+
+                <a class="btn btn-outline-primary p-2 me-2" onclick="showTab('last-orders')">
+                    <i class="bi bi-clock-history"></i>
+                </a>
+                <a class="btn btn-outline-primary p-2 me-2"
+                   onclick="window.location.href='{% url 'profile_view' %}'">
+                    <i class="bi bi-person"></i>
+                </a>
+
+                {% if user.is_authenticated %}
+                    <form action="{% url 'logout' %}" method="post" class="mb-0 d-inline" id="logoutForm">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-primary p-2" onclick="clearLocalStorage()">
+                            <i class="bi bi-box-arrow-right"></i>
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+</header>
+
+    <div class="container mt-4">
+        <div id="order" class="tab-content">
+            <div class="container mt-5">
+                <h1 class="text-center mb-4">Products</h1>
+
+                {% for category in categories %}
+                    <h2>{{ category.description }}</h2>
+                    <div class="position-relative mb-5">
+
+                        <div class="overflow-auto">
+                            <div class="d-flex flex-nowrap mt-" id="carousel-{{ category.name }}">
+                                {% for product in category.products.all %}
+                                    <div class="card me-3 product-card mt-3" data-id="{{ product.id }}"
+                                         data-name="{{ product.name }}" data-price="{{ product.price }}"
+                                         style="flex: 0 0 auto; width: 18rem;">
+                                        {% if product.image %}
+                                            <img src="{{ product.image.url }}" class="card-img-top img-fluid"
+                                                 alt="{{ product.name }}"
+                                                 style="max-height: 200px; object-fit: contain;">
+                                        {% endif %}
+                                        <div class="card-body d-flex flex-column">
+                                            <h5 class="card-title">{{ product.name }}</h5>
+                                            <p class="card-text flex-grow-1">{{ product.description }}</p>
+                                            <p class="card-text">{{ product.price }} TL</p>
+                                            <button class="btn btn-primary mt-auto add-to-cart">Add to Cart</button>
+                                        </div>
+                                    </div>
+                                {% empty %}
+                                    <p>Bu kategoride ürün bulunmamaktadır.</p>
+                                {% endfor %}
+                            </div>
                         </div>
-                        <!-- Address Info Section -->
-                        <div class="col-md-6 mb-3">
-                            <h6>Address</h6>
-                            <form>
-                                <div class="mb-3">
-                                    <label for="city" class="form-label">City</label>
-                                    <input type="text" class="form-control" id="city" placeholder="New York">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="district" class="form-label">District</label>
-                                    <input type="text" class="form-control" id="district" placeholder="Manhattan">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="neighbourhood" class="form-label">Neighbourhood</label>
-                                    <input type="text" class="form-control" id="neighbourhood" placeholder="Chelsea">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="street" class="form-label">Street</label>
-                                    <input type="text" class="form-control" id="street" placeholder="5th Avenue">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="no" class="form-label">No</label>
-                                    <input type="text" class="form-control" id="no" placeholder="123">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="apartment" class="form-label">Apartment</label>
-                                    <input type="text" class="form-control" id="apartment" placeholder="4B">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="floor" class="form-label">Floor</label>
-                                    <input type="text" class="form-control" id="floor" placeholder="4">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="number" class="form-label">Number</label>
-                                    <input type="text" class="form-control" id="number" placeholder="101">
-                                </div>
-                                <div class="d-flex justify-content-end p-2">
-                                    <button type="submit" class="btn btn-primary me-2">Save</button>
-                                    <button type="button" class="btn btn-secondary me-2" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
-                                        Change Password
-                                    </button>
-                                    <button type="button" class="btn btn-warning me-2" onclick="showTab('order')">Cancel</button>
-                                    
-                                </div>
-                            </form>
+                    </div>
+                {% endfor %}
+
+            </div>
+        </div>
+
+        <div id="profile" class="tab-content" style="display: none;">
+            <div class="container">
+                <div class="card" style="width: 80%;">
+                    <div class="card-body">
+                        <h5 class="card-title mb-4">Personal Info & Address</h5>
+                        <div class="row">
+                            <!-- Personal Info Section -->
+                            <div class="col-md-6 mb-3">
+                                <h6>Personal Info</h6>
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="name" class="form-label">Name</label>
+                                        <input type="text" class="form-control" id="name" placeholder="John">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="surname" class="form-label">Surname</label>
+                                        <input type="text" class="form-control" id="surname" placeholder="Doe">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="email"
+                                               placeholder="john.doe@example.com">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="phone" class="form-label">Phone Number</label>
+                                        <input type="tel" class="form-control" id="phone" placeholder="+1234567890">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Gender</label>
+                                        <select class="form-select" id="gender">
+                                            <option selected>Select Gender</option>
+                                            <option value="male">Male</option>
+                                            <option value="female">Female</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- Address Info Section -->
+                            <div class="col-md-6 mb-3">
+                                <h6>Address</h6>
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="city" class="form-label">City</label>
+                                        <input type="text" class="form-control" id="city" placeholder="New York">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="district" class="form-label">District</label>
+                                        <input type="text" class="form-control" id="district" placeholder="Manhattan">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="neighbourhood" class="form-label">Neighbourhood</label>
+                                        <input type="text" class="form-control" id="neighbourhood"
+                                               placeholder="Chelsea">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="street" class="form-label">Street</label>
+                                        <input type="text" class="form-control" id="street" placeholder="5th Avenue">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="no" class="form-label">No</label>
+                                        <input type="text" class="form-control" id="no" placeholder="123">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="apartment" class="form-label">Apartment</label>
+                                        <input type="text" class="form-control" id="apartment" placeholder="4B">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="floor" class="form-label">Floor</label>
+                                        <input type="text" class="form-control" id="floor" placeholder="4">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="number" class="form-label">Number</label>
+                                        <input type="text" class="form-control" id="number" placeholder="101">
+                                    </div>
+                                    <div class="d-flex justify-content-end p-2">
+                                        <button type="submit" class="btn btn-primary me-2">Save</button>
+                                        <button type="button" class="btn btn-secondary me-2" data-bs-toggle="modal"
+                                                data-bs-target="#changePasswordModal">
+                                            Change Password
+                                        </button>
+                                        <button type="button" class="btn btn-warning me-2" onclick="showTab('order')">
+                                            Cancel
+                                        </button>
+
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-     </div>
 
-      <div id="last-orders" class="tab-content" style="display: none;">
-        <h2>Last Order's</h2>
-        <table class="table table-striped">
-            <thead>
+        <div id="last-orders" class="tab-content" style="display: none;">
+            <h2>Last Order's</h2>
+            <table class="table table-striped">
+                <thead>
                 <tr>
                     <th>Order No</th> <!-- Sipariş numarası sütunu -->
                     <th>Order Date</th>
@@ -179,8 +192,8 @@
                     <th>Total</th>
                     <th>Status</th>
                 </tr>
-            </thead>
-            <tbody>
+                </thead>
+                <tbody>
                 {% if orders %}
                     {% for order in orders %}
                         <tr>
@@ -189,7 +202,9 @@
                             <td>
                                 <ul>
                                     {% for item in order.items.all %}
-                                        <li>{{ item.product_name }} - {{ item.quantity }} pcs - {{ item.product_price }} ₺ each </li>
+                                        <li>{{ item.product_name }} - {{ item.quantity }} pcs - {{ item.product_price }}
+                                            ₺ each
+                                        </li>
                                     {% endfor %}
                                 </ul>
                             </td>
@@ -210,43 +225,47 @@
                         <td colspan="5">You don't have any order..</td>
                     </tr>
                 {% endif %}
-            </tbody>
-        </table>
-        
-      </div>
-      
-  </div>
+                </tbody>
+            </table>
 
-  <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="mb-3">
-                        <label for="currentPassword" class="form-label">Current Password</label>
-                        <input type="password" class="form-control" id="currentPassword" placeholder="Enter current password">
-                    </div>
-                    <div class="mb-3">
-                        <label for="newPassword" class="form-label">New Password</label>
-                        <input type="password" class="form-control" id="newPassword" placeholder="Enter new password">
-                    </div>
-                    <div class="mb-3">
-                        <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                        <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm new password">
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary">Save changes</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+
+    </div>
+
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="currentPassword" class="form-label">Current Password</label>
+                            <input type="password" class="form-control" id="currentPassword"
+                                   placeholder="Enter current password">
+                        </div>
+                        <div class="mb-3">
+                            <label for="newPassword" class="form-label">New Password</label>
+                            <input type="password" class="form-control" id="newPassword"
+                                   placeholder="Enter new password">
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-control" id="confirmPassword"
+                                   placeholder="Confirm new password">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-</body>
+    </body>
 {% endblock %}

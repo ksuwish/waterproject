@@ -14,6 +14,8 @@ from .forms import ProductForm, PersonalInfoForm
 from .forms import CategoryForm
 from .forms import CustomUserCreationForm, AddressForm
 from .models import PersonalInfo
+from .models import PersonalInfo, Address
+from .forms import PersonalInfoForm, AddressForm
 
 
 # Create your views here.
@@ -294,3 +296,45 @@ def add_address_view(request):
         form = AddressForm()
 
     return render(request, 'add_address.html', {'form': form})
+
+
+@login_required
+def profile_view(request):
+    try:
+        # Mevcut kullanıcının PersonalInfo kaydını al
+        personal_info = PersonalInfo.objects.get(user=request.user)
+    except PersonalInfo.DoesNotExist:
+        personal_info = None
+
+    try:
+        # Mevcut kullanıcının AddressInfo kaydını al
+        address_info = Address.objects.get(user=request.user)
+    except Address.DoesNotExist:
+        address_info = None
+
+    if request.method == 'POST':
+        personal_form = PersonalInfoForm(request.POST, instance=personal_info)
+        address_form = AddressForm(request.POST, instance=address_info)
+
+        if personal_form.is_valid() and address_form.is_valid():
+            personal_info = personal_form.save(commit=False)
+            personal_info.user = request.user
+            personal_info.save()
+
+            address_info = address_form.save(commit=False)
+            address_info.user = request.user
+            address_info.save()
+
+            return redirect('profile_view')
+
+    else:
+        personal_form = PersonalInfoForm(instance=personal_info)
+        address_form = AddressForm(instance=address_info)
+
+    user_email = request.user.email
+
+    return render(request, 'profile.html', {
+        'personal_form': personal_form,
+        'address_form': address_form,
+        'user_email': user_email
+    })

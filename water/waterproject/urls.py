@@ -29,6 +29,7 @@ urlpatterns = [
     path('categories/delete/<int:pk>/', views.delete_category, name='delete_category'),
     path('create-personal-info/', create_personal_info, name='create_personal_info'),
     path('add-address/', add_address_view, name='add_address'),
+    path('profile/', views.profile_view, name='profile_view'),
 ]
 
 if settings.DEBUG:

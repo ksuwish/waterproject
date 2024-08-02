@@ -77,7 +77,7 @@ class PersonalInfo(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, blank=True, null=True)
     surname = models.CharField(max_length=100, blank=True, null=True)
-    email = models.EmailField(max_length=254, unique=True, blank=True, null=True)
+    email = models.EmailField(max_length=254, blank=True, null=True)
     phone = models.CharField(max_length=20, blank=True, null=True)
     gender = models.CharField(max_length=10, blank=True, null=True,
                               choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')])

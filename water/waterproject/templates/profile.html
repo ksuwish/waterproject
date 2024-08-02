@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Kullanıcı Profili</title>
+</head>
+{% load custom_filters %}
+<body>
+<div class="container mt-5">
+    <h1 class="mb-4">User Profile</h1>
+    <form method="POST" class="row g-3">
+        {% csrf_token %}
+
+        <h4>Personal Information</h4>
+        <div class="col-md-6">
+            <label for="name" class="form-label">Name</label>
+            {{ personal_form.name|add_class:"form-control" }}
+        </div>
+        <div class="col-md-6">
+            <label for="surname" class="form-label">Surname</label>
+            {{ personal_form.surname|add_class:"form-control" }}
+        </div>
+
+        <div class="col-md-6">
+            <label for="user_email" class="form-label">Email</label>
+            <input type="email" id="user_email" class="form-control" value="{{ user_email }}">
+        </div>
+        <div class="col-md-6">
+            <label for="phone" class="form-label">Phone Number</label>
+            {{ personal_form.phone|add_class:"form-control" }}
+        </div>
+        <div class="col-md-6">
+            <label for="gender" class="form-label">Gender</label>
+            {{ personal_form.gender|add_class:"form-select" }}
+        </div>
+
+        <h4 class="mt-4">Adress Information</h4>
+
+        <div class="col-md-6">
+            <label for="country" class="form-label">Country</label>
+            {{ address_form.country|add_class:"form-control" }}
+        </div>
+        <div class="col-md-6">
+            <label for="city" class="form-label">City</label>
+            {{ address_form.city|add_class:"form-control" }}
+        </div>
+        <div class="col-md-6">
+            <label for="district" class="form-label">District</label>
+            {{ address_form.district|add_class:"form-control" }}
+        </div>
+        <div class="col-md-6">
+            <label for="neighborhood" class="form-label">Neighborhood</label>
+            {{ address_form.neighborhood|add_class:"form-control" }}
+        </div>
+        <div class="col-md-6">
+            <label for="street" class="form-label">Street</label>
+            {{ address_form.street|add_class:"form-control" }}
+        </div>
+        <div class="col-md-6">
+            <label for="building_number" class="form-label">Building Number</label>
+            {{ address_form.building_number|add_class:"form-control" }}
+        </div>
+        <div class="col-md-6">
+            <label for="floor" class="form-label">Floor</label>
+            {{ address_form.floor|add_class:"form-control" }}
+        </div>
+
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Uptade</button>
+            <a href="{% url 'user_dashboard' %}" class="btn btn-secondary">Back</a>
+        </div>
+
+        {% if personal_form.errors %}
+            <div class="alert alert-danger">
+                {{ personal_form.errors }}
+            </div>
+        {% endif %}
+        {% if address_form.errors %}
+            <div class="alert alert-danger">
+                {{ address_form.errors }}
+            </div>
+        {% endif %}
+
+    </form>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ltrjvnR4GeARYPPOyfnDf8JkCAk7ItlBhfhA8ixmuJ12UCwIL80TJy3Gm2K3mepQ"
+        crossorigin="anonymous"></script>
+</body>
+</html>
