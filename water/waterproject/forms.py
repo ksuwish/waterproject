@@ -57,3 +57,9 @@ class AddressForm(forms.ModelForm):
     class Meta:
         model = Address
         fields = ['city', 'district', 'neighborhood', 'street', 'building_number', 'floor', 'postal_code', 'country']
+
+
+class UsernameOnlyForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username']

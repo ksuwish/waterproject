@@ -15,7 +15,7 @@
 WORK LIST:
 UserDashboard Finish (profil görüntüleme, sipariş oluşturma, sipariş geçmişi görüntüleme)!!!
 
-Admindashboard yapılacaklar (  yeni kullanıcı yaratma,  editleme, ANA EKRANA istatistik görüntüler eklenmesi )
+Admindashboard yapılacaklar (  yeni kullanıcı yaratma, ANA EKRANA istatistik görüntüler eklenmesi )
 
 ORDERS sipariş durumu eklenmesi sipariş verildiğinde sipariş oluşturuldu sipariş teslim edilidğinde sipariş teslim edildi gibi
 

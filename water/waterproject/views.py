@@ -1,21 +1,16 @@
-from django.http.response import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 from django.contrib.auth import login, authenticate
-from django.shortcuts import redirect, get_object_or_404, redirect
-from django.http import JsonResponse
-import json
-from django.http import HttpResponseForbidden
+from django.http import JsonResponse, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
-from .models import Product, Category, Order, OrderItem, Product, User
-from .forms import ProductForm, PersonalInfoForm
-from .forms import CategoryForm
-from .forms import CustomUserCreationForm, AddressForm
-from .models import PersonalInfo
-from .models import PersonalInfo, Address
-from .forms import PersonalInfoForm, AddressForm
+from django.utils.timezone import now, timedelta
+from django.db.models import Sum
+import json
+
+from .models import Product, Category, Order, OrderItem, User, PersonalInfo, Address
+from .forms import ProductForm, CategoryForm, CustomUserCreationForm, PersonalInfoForm, AddressForm, UsernameOnlyForm
 
 
 # Create your views here.
@@ -97,8 +92,36 @@ def superuser_dashboard(request):
     orders = Order.objects.all().prefetch_related('items').order_by('-created_at')
     users = User.objects.filter(is_staff=False)
 
-    return render(request, 'dashboard/superuser_dashboard.html',
-                  {'products': products, 'orders': orders, 'users': users})
+    total_users = User.objects.count()
+    active_users = User.objects.filter(last_login__gte=now() - timedelta(days=30)).count()
+    new_users = User.objects.filter(date_joined__gte=now() - timedelta(days=30)).count()
+
+    total_orders = Order.objects.count()
+    # completed_orders = Order.objects.filter(status='completed').count()
+    # pending_orders = Order.objects.filter(status='pending').count()
+    # total_revenue = Order.objects.filter(status='completed').aggregate(Sum('total_price'))['total_price__sum']
+
+    total_products = Product.objects.count()
+    in_stock_products = Product.objects.filter(stock__gt=0).count()
+    out_of_stock_products = Product.objects.filter(stock=0).count()
+
+    context = {
+        'products': products,
+        'orders': orders,
+        'users': users,
+        'total_users': total_users,
+        'active_users': active_users,
+        'new_users': new_users,
+        'total_orders': total_orders,
+        # 'completed_orders': completed_orders,
+        # 'pending_orders': pending_orders,
+        # 'total_revenue': total_revenue,
+        'total_products': total_products,
+        'in_stock_products': in_stock_products,
+        'out_of_stock_products': out_of_stock_products,
+    }
+
+    return render(request, 'dashboard/superuser_dashboard.html', context)
 
 
 @staff_or_admin_required
@@ -130,7 +153,7 @@ def order_view(request):
     return render(request, 'order.html')
 
 
-@csrf_exempt  # Eğer CSRF korumasını devre dışı bırakmak istiyorsanız, kullanabilirsiniz.
+@csrf_exempt
 def create_order(request):
     if request.method == 'POST':
         try:
@@ -147,8 +170,14 @@ def create_order(request):
             # Yeni siparişi oluştur
             order = Order.objects.create(user=user, total_price=total_price)
 
-            # Siparişe ürünleri ekle
+            # Siparişe ürünleri ekle ve stokları güncelle
             for item in cart_data:
+                product = Product.objects.get(id=item['product_id'])
+
+                if product.stock < item['quantity']:
+                    return JsonResponse({'status': 'error', 'message': f'Insufficient stock for {product.name}'}, status=400)
+
+                # Siparişe ürün ekle
                 OrderItem.objects.create(
                     order=order,
                     product_id=item['product_id'],
@@ -157,9 +186,15 @@ def create_order(request):
                     quantity=item['quantity']
                 )
 
+                # Stokları güncelle
+                product.stock -= item['quantity']
+                product.save()
+
             return JsonResponse({'status': 'success', 'order_id': order.id})
         except json.JSONDecodeError:
             return JsonResponse({'status': 'error', 'message': 'Invalid JSON'}, status=400)
+        except Product.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Product does not exist'}, status=400)
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=400)
@@ -180,7 +215,7 @@ def add_product(request):
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('product_list')
+            return redirect('superuser_dashboard')
     else:
         form = ProductForm()
     return render(request, 'product_form.html', {'form': form})
@@ -192,7 +227,7 @@ def edit_product(request, pk):
         form = ProductForm(request.POST, request.FILES, instance=product)
         if form.is_valid():
             form.save()
-            return redirect('product_list')
+            return redirect('superuser_dashboard')
     else:
         form = ProductForm(instance=product)
     return render(request, 'product_form.html', {'form': form})
@@ -382,13 +417,39 @@ def edit_personal_info(request, user_id):
     return render(request, 'edit_personal_info.html', {'form': form})
 
 
-def edit_address(request, address_id):
-    address = Address.objects.get(id=address_id)
+def edit_address(request, address_id, user_id):
+    address = get_object_or_404(Address, id=address_id)
     if request.method == 'POST':
         form = AddressForm(request.POST, instance=address)
         if form.is_valid():
             form.save()
-            return redirect('user_details')  # Yönlendirme yapacağınız sayfa
+            return redirect('user_detail', user_id=user_id)  # Kullanıcı detay sayfasına yönlendir
     else:
         form = AddressForm(instance=address)
-    return render(request, 'edit_address.html', {'form': form})
+    return render(request, 'edit_address.html', {'form': form, 'user_id': user_id})
+
+
+def add_user(request):
+    if request.method == 'POST':
+        user_form = UsernameOnlyForm(request.POST)
+        address_form = AddressForm(request.POST)
+
+        if user_form.is_valid() and address_form.is_valid():
+            username = user_form.cleaned_data['username']
+
+            if not User.objects.filter(username=username).exists():
+                user = User.objects.create(username=username)
+
+                # Adres bilgilerini kaydet
+                address = address_form.save(commit=False)
+                address.user = user  # Adresin kullanıcıya ait olduğunu belirtin
+                address.save()
+
+                return redirect('superuser_dashboard')  # Başarıyla ekledikten sonra yönlendirme
+            else:
+                user_form.add_error('username', 'Username already exists')
+    else:
+        user_form = UsernameOnlyForm()
+        address_form = AddressForm()
+
+    return render(request, 'add_user.html', {'user_form': user_form, 'address_form': address_form})

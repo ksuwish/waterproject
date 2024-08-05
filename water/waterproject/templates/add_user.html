@@ -1,0 +1,127 @@
+{% load custom_filters %}
+
+{% block content %}
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <div class="container mt-5">
+    <h2 class="mb-4">Add New User</h2>
+    <form method="post">
+      {% csrf_token %}
+
+      <!-- Kullanıcı Bilgileri Formu -->
+      <div class="mb-3">
+        <label for="{{ user_form.username.id_for_label }}" class="form-label">Username</label>
+        <input type="text" name="username" id="{{ user_form.username.id_for_label }}" class="form-control" value="{{ user_form.username.value }}">
+        {% if user_form.username.errors %}
+          <div class="invalid-feedback">
+            {% for error in user_form.username.errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Adres Bilgileri Formu -->
+      <div class="mb-3">
+        <label for="{{ address_form.city.id_for_label }}" class="form-label">City</label>
+        <input type="text" name="city" id="{{ address_form.city.id_for_label }}" class="form-control" value="{{ address_form.city.value }}">
+        {% if address_form.city.errors %}
+          <div class="invalid-feedback">
+            {% for error in address_form.city.errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label for="{{ address_form.district.id_for_label }}" class="form-label">District</label>
+        <input type="text" name="district" id="{{ address_form.district.id_for_label }}" class="form-control" value="{{ address_form.district.value }}">
+        {% if address_form.district.errors %}
+          <div class="invalid-feedback">
+            {% for error in address_form.district.errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label for="{{ address_form.neighborhood.id_for_label }}" class="form-label">Neighborhood</label>
+        <input type="text" name="neighborhood" id="{{ address_form.neighborhood.id_for_label }}" class="form-control" value="{{ address_form.neighborhood.value }}">
+        {% if address_form.neighborhood.errors %}
+          <div class="invalid-feedback">
+            {% for error in address_form.neighborhood.errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label for="{{ address_form.street.id_for_label }}" class="form-label">Street</label>
+        <input type="text" name="street" id="{{ address_form.street.id_for_label }}" class="form-control" value="{{ address_form.street.value }}">
+        {% if address_form.street.errors %}
+          <div class="invalid-feedback">
+            {% for error in address_form.street.errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label for="{{ address_form.building_number.id_for_label }}" class="form-label">Building Number</label>
+        <input type="text" name="building_number" id="{{ address_form.building_number.id_for_label }}" class="form-control" value="{{ address_form.building_number.value }}">
+        {% if address_form.building_number.errors %}
+          <div class="invalid-feedback">
+            {% for error in address_form.building_number.errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label for="{{ address_form.floor.id_for_label }}" class="form-label">Floor</label>
+        <input type="text" name="floor" id="{{ address_form.floor.id_for_label }}" class="form-control" value="{{ address_form.floor.value }}">
+        {% if address_form.floor.errors %}
+          <div class="invalid-feedback">
+            {% for error in address_form.floor.errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label for="{{ address_form.postal_code.id_for_label }}" class="form-label">Postal Code</label>
+        <input type="text" name="postal_code" id="{{ address_form.postal_code.id_for_label }}" class="form-control" value="{{ address_form.postal_code.value }}">
+        {% if address_form.postal_code.errors %}
+          <div class="invalid-feedback">
+            {% for error in address_form.postal_code.errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label for="{{ address_form.country.id_for_label }}" class="form-label">Country</label>
+        <input type="text" name="country" id="{{ address_form.country.id_for_label }}" class="form-control" value="{{ address_form.country.value }}">
+        {% if address_form.country.errors %}
+          <div class="invalid-feedback">
+            {% for error in address_form.country.errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="text-end">
+        <button type="submit" class="btn btn-primary">Add User</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}
