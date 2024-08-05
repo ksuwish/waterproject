@@ -24,9 +24,9 @@
             {{ personal_form.surname|add_class:"form-control" }}
         </div>
 
-        <div class="col-md-6">
-            <label for="user_email" class="form-label">Email</label>
-            {{ user.email }}
+        <div class="form-group">
+        <label for="id_email">Email:</label>
+        <input type="email" name="email" id="id_email" value="{{ user_email }}" class="form-control">
         </div>
         <div class="col-md-6">
             <label for="phone" class="form-label">Phone Number</label>

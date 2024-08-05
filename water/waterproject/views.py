@@ -313,14 +313,24 @@ def profile_view(request):
         address_info = None
 
     if request.method == 'POST':
+        # POST verileriyle formları başlat
         personal_form = PersonalInfoForm(request.POST, instance=personal_info)
         address_form = AddressForm(request.POST, instance=address_info)
 
+        # Kullanıcıdan gelen email adresini al
+        email = request.POST.get('email', request.user.email)
+
         if personal_form.is_valid() and address_form.is_valid():
+            # Kişisel bilgileri kaydet
             personal_info = personal_form.save(commit=False)
             personal_info.user = request.user
             personal_info.save()
 
+            # Kullanıcının email adresini güncelle
+            request.user.email = email
+            request.user.save()
+
+            # Adres bilgilerini kaydet
             address_info = address_form.save(commit=False)
             address_info.user = request.user
             address_info.save()
@@ -328,6 +338,7 @@ def profile_view(request):
             return redirect('profile_view')
 
     else:
+        # GET isteğinde mevcut bilgileri formlara yükle
         personal_form = PersonalInfoForm(instance=personal_info)
         address_form = AddressForm(instance=address_info)
 
@@ -369,6 +380,7 @@ def edit_personal_info(request, user_id):
         form = PersonalInfoForm(instance=personal_info, user=user)
 
     return render(request, 'edit_personal_info.html', {'form': form})
+
 
 def edit_address(request, address_id):
     address = Address.objects.get(id=address_id)
