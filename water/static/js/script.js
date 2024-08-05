@@ -292,11 +292,3 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-function showUserOrders(userId) {
-    fetch(`/user-orders/${userId}/`)
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('ordersContainer').innerHTML = data;
-        });
-}
-
