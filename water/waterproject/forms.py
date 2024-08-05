@@ -40,12 +40,17 @@ class CategoryForm(forms.ModelForm):
 
 
 class PersonalInfoForm(forms.ModelForm):
+    user_email = forms.EmailField(required=False, label="Email")
+
     class Meta:
         model = PersonalInfo
-        fields = ['name', 'surname', 'phone', 'gender']
-        widgets = {
-            'gender': forms.Select(choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')])
-        }
+        fields = ['name', 'surname', 'phone', 'gender', 'user_email']
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if self.user:
+            self.fields['user_email'].initial = self.user.email
 
 
 class AddressForm(forms.ModelForm):

@@ -338,3 +338,45 @@ def profile_view(request):
         'address_form': address_form,
         'user_email': user_email
     })
+
+
+def user_detail(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    personal_info = get_object_or_404(PersonalInfo, user=user)
+    address = Address.objects.filter(user=user)  # Kullanıcıya ait adresleri al
+    orders = Order.objects.filter(user=user).order_by('-created_at')
+    return render(request, 'user_detail.html', {
+        'user': user,
+        'personal_info': personal_info,
+        'orders': orders,
+        'address': address
+    })
+
+
+@login_required
+def edit_personal_info(request, user_id):
+    personal_info = get_object_or_404(PersonalInfo, user_id=user_id)
+    user = get_object_or_404(User, id=user_id)
+
+    if request.method == 'POST':
+        form = PersonalInfoForm(request.POST, instance=personal_info, user=user)
+        if form.is_valid():
+            form.save()
+            user.email = form.cleaned_data['user_email']
+            user.save()
+            return redirect('user_detail', user_id=user_id)  # Yönlendirme yapacağınız sayfa
+    else:
+        form = PersonalInfoForm(instance=personal_info, user=user)
+
+    return render(request, 'edit_personal_info.html', {'form': form})
+
+def edit_address(request, address_id):
+    address = Address.objects.get(id=address_id)
+    if request.method == 'POST':
+        form = AddressForm(request.POST, instance=address)
+        if form.is_valid():
+            form.save()
+            return redirect('user_details')  # Yönlendirme yapacağınız sayfa
+    else:
+        form = AddressForm(instance=address)
+    return render(request, 'edit_address.html', {'form': form})

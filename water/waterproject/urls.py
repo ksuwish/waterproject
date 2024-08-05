@@ -30,6 +30,9 @@ urlpatterns = [
     path('create-personal-info/', create_personal_info, name='create_personal_info'),
     path('add-address/', add_address_view, name='add_address'),
     path('profile/', views.profile_view, name='profile_view'),
+    path('user/<int:user_id>/', views.user_detail, name='user_detail'),
+    path('edit_personal_info/<int:user_id>/', views.edit_personal_info, name='edit_personal_info'),
+    path('edit-address/<int:address_id>/', views.edit_address, name='edit_address'),
 ]
 
 if settings.DEBUG:
