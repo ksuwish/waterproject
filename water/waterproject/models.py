@@ -28,10 +28,19 @@ class Product(models.Model):
 
 
 class Order(models.Model):
+    STATUS_CHOICES = [
+        ('completed', 'Completed'),
+        ('pending', 'Pending'),
+    ]
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(default=timezone.now)
     order_number = models.PositiveIntegerField(null=True, blank=True)  # Sipariş numarası alanı
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')  # Default değer ayarlandı
+
+    def __str__(self):
+        return f"Order {self.id} by {self.user.username}"
 
     def save(self, *args, **kwargs):
         if self.pk is None:  # Yeni bir sipariş oluşturuluyorsa
@@ -74,7 +83,7 @@ class Contact(models.Model):
 
 
 class PersonalInfo(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='personalinfo')
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='personalinfo')
     name = models.CharField(max_length=100, blank=True, null=True)
     surname = models.CharField(max_length=100, blank=True, null=True)
     email = models.EmailField(max_length=254, blank=True, null=True)

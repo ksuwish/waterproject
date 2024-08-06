@@ -2,18 +2,24 @@
 
 <h1 class="mb-4">Orders</h1>
 
-<table class="table table-striped">
+<!-- Arama formu -->
+<div class="mb-4">
+    <label for="order_number">Search by Order Number:</label>
+    <input type="text" id="order_number" class="form-control" placeholder="Enter order number">
+</div>
+
+<table class="table table-striped" id="ordersTable">
     <thead>
-        <tr>
-            <th>Order Number</th>
-            <th>User</th>
-            <th>Total Price</th>
-            <th>Created At</th>
-            <th>Items</th>
-        </tr>
+    <tr>
+        <th>Order Number</th>
+        <th>User</th>
+        <th>Total Price</th>
+        <th>Created At</th>
+        <th>Items</th>
+    </tr>
     </thead>
     <tbody>
-        {% for order in orders %}
+    {% for order in orders %}
         <tr>
             <td>{{ order.id }}</td>
             <td>{{ order.user.username }}</td>
@@ -22,11 +28,40 @@
             <td>
                 <ul>
                     {% for item in order.items.all %}
-                    <li>{{ item.product_name }} - {{ item.quantity }} pcs</li>
+                        <li>{{ item.product_name }} - {{ item.quantity }} pcs</li>
                     {% endfor %}
                 </ul>
             </td>
         </tr>
-        {% endfor %}
+    {% empty %}
+        <tr>
+            <td colspan="5">No orders found</td>
+        </tr>
+    {% endfor %}
     </tbody>
 </table>
+
+<!-- JavaScript kodu -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const orderInput = document.getElementById('order_number');
+        const table = document.getElementById('ordersTable');
+        const rows = table.querySelectorAll('tbody tr');
+
+        // Arama fonksiyonu
+        function filterOrders() {
+            const searchTerm = orderInput.value.toLowerCase();
+            rows.forEach(row => {
+                const orderNumber = row.cells[0].textContent.toLowerCase();
+                if (orderNumber.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // Arama inputuna event listener ekle
+        orderInput.addEventListener('input', filterOrders);
+    });
+</script>

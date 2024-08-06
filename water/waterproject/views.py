@@ -97,13 +97,37 @@ def superuser_dashboard(request):
     new_users = User.objects.filter(date_joined__gte=now() - timedelta(days=30)).count()
 
     total_orders = Order.objects.count()
-    # completed_orders = Order.objects.filter(status='completed').count()
-    # pending_orders = Order.objects.filter(status='pending').count()
-    # total_revenue = Order.objects.filter(status='completed').aggregate(Sum('total_price'))['total_price__sum']
+    completed_orders = Order.objects.filter(status='completed').count()
+    pending_orders = Order.objects.filter(status='pending').count()
+    total_revenue = Order.objects.filter(status='completed').aggregate(Sum('total_price'))['total_price__sum']
 
     total_products = Product.objects.count()
     in_stock_products = Product.objects.filter(stock__gt=0).count()
     out_of_stock_products = Product.objects.filter(stock=0).count()
+
+    today = now().date()
+    start_of_month = today.replace(day=1)
+    start_of_day = today
+
+    monthly_revenue = \
+        Order.objects.filter(status='completed', created_at__gte=start_of_month).aggregate(Sum('total_price'))[
+            'total_price__sum']
+    daily_revenue = \
+        Order.objects.filter(status='completed', created_at__gte=start_of_day).aggregate(Sum('total_price'))[
+            'total_price__sum']
+
+    last_month_start = start_of_month - timedelta(days=1)
+    last_month_start = last_month_start.replace(day=1)
+    last_month_end = start_of_month - timedelta(days=1)
+
+    last_month_revenue = \
+        Order.objects.filter(status='completed', created_at__range=[last_month_start, last_month_end]).aggregate(
+            Sum('total_price'))['total_price__sum']
+
+    yesterday = today - timedelta(days=1)
+    yesterday_revenue = \
+        Order.objects.filter(status='completed', created_at__date=yesterday).aggregate(Sum('total_price'))[
+            'total_price__sum']
 
     context = {
         'products': products,
@@ -113,12 +137,16 @@ def superuser_dashboard(request):
         'active_users': active_users,
         'new_users': new_users,
         'total_orders': total_orders,
-        # 'completed_orders': completed_orders,
-        # 'pending_orders': pending_orders,
-        # 'total_revenue': total_revenue,
+        'completed_orders': completed_orders,
+        'pending_orders': pending_orders,
+        'total_revenue': total_revenue,
         'total_products': total_products,
         'in_stock_products': in_stock_products,
         'out_of_stock_products': out_of_stock_products,
+        'monthly_revenue': monthly_revenue,
+        'daily_revenue': daily_revenue,
+        'last_month_revenue': last_month_revenue,
+        'yesterday_revenue': yesterday_revenue,
     }
 
     return render(request, 'dashboard/superuser_dashboard.html', context)
@@ -175,7 +203,8 @@ def create_order(request):
                 product = Product.objects.get(id=item['product_id'])
 
                 if product.stock < item['quantity']:
-                    return JsonResponse({'status': 'error', 'message': f'Insufficient stock for {product.name}'}, status=400)
+                    return JsonResponse({'status': 'error', 'message': f'Insufficient stock for {product.name}'},
+                                        status=400)
 
                 # Siparişe ürün ekle
                 OrderItem.objects.create(
