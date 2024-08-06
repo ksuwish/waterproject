@@ -4,14 +4,13 @@
       integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
 <div class="container mt-4">
-    <a href="javascript:history.back()" class="btn btn-secondary mb-4">Back to User List</a>
-
+    <a href="{% url 'superuser_dashboard' %}" class="btn btn-secondary mb-4">Back to User List</a>
     <h1 class="mb-4">User Details</h1>
     <div class="card mb-4 shadow-sm">
         <div class="card-body">
             <h2 class="card-title mb-3">{{ user.username }}</h2>
             <div class="row mb-3">
-                <a href="{% url 'edit_personal_info' user.id %}" class="btn btn-warning">Edit Personal Info</a>
+
                 <div class="col-md-6">
                     <p><strong>First Name:</strong> {{ personal_info.name }}</p>
                     <p><strong>Last Name:</strong> {{ personal_info.surname }}</p>
@@ -22,6 +21,7 @@
                     <p><strong>Gender:</strong> {{ personal_info.gender }}</p>
                     <p><strong>Created Date:</strong> {{ user.date_joined }}</p>
                 </div>
+                <a href="{% url 'edit_personal_info' user.id %}" class="btn btn-warning">Edit Personal Info</a>
             </div>
             {% if address %}
                 <h3 class="mb-3">Addresses:</h3>
@@ -38,6 +38,9 @@
                                     <p><strong>Building Number:</strong> {{ address.building_number }}</p>
                                     <p><strong>Floor:</strong> {{ address.floor }}</p>
                                     <p><strong>Postal Code:</strong> {{ address.postal_code }}</p>
+                                </div>
+                                <div class="card-footer">
+                                    <a href="{% url 'edit_address' user.id address.id %}" class="btn btn-primary">Edit Address</a>
                                 </div>
                             </div>
                         </div>

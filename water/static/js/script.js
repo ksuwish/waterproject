@@ -1,23 +1,21 @@
-  $('#reg-modal').on('shown.bs.modal', function () {
+$('#reg-modal').on('shown.bs.modal', function () {
     $('#myInput').trigger('focus')
-  })
-
-
+})
 
 
 function showTab(tabId) {
-  var tabs = document.getElementsByClassName('tab-content');
-  for (var i = 0; i < tabs.length; i++) {
-      tabs[i].style.display = 'none';
-  }
-  document.getElementById(tabId).style.display = 'block';
+    var tabs = document.getElementsByClassName('tab-content');
+    for (var i = 0; i < tabs.length; i++) {
+        tabs[i].style.display = 'none';
+    }
+    document.getElementById(tabId).style.display = 'block';
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-  showTab('order');
+document.addEventListener('DOMContentLoaded', function () {
+    showTab('order');
 });
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Sepeti tutacak bir dizi
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
 
@@ -71,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Remove buttons click event listener
         document.querySelectorAll('.btn-close').forEach(button => {
-            button.addEventListener('click', function(event) {
+            button.addEventListener('click', function (event) {
                 const index = parseInt(button.getAttribute('data-index'), 10);
                 event.stopPropagation();
                 if (index >= 0 && index < cart.length) {
@@ -90,14 +88,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // Make an Order button click event listener
-        document.getElementById('orderButton')?.addEventListener('click', function() {
+        document.getElementById('orderButton')?.addEventListener('click', function () {
             localStorage.setItem('cart', JSON.stringify(cart)); // Sepeti localStorage'a kaydet
             window.location.href = '/order'; // Sipariş sayfasına yönlendir
         });
     }
 
     document.querySelectorAll('.add-to-cart').forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function () {
             const productCard = button.closest('.product-card');
             if (!productCard) {
                 console.error('Product card element not found.');
@@ -137,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const orderList = document.getElementById('orderList');
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
 
@@ -176,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Çıkarma butonlarına event listener ekle
         document.querySelectorAll('.btn-danger').forEach(button => {
-            button.addEventListener('click', function(event) {
+            button.addEventListener('click', function (event) {
                 const index = parseInt(button.getAttribute('data-index'), 10);
                 if (index >= 0 && index < cart.length) {
                     // Ürünün miktarını bir azalt
@@ -198,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function() {
     updateOrderList();
 
     // Confirm Order button click event listener
-    document.getElementById('confirmOrderButton')?.addEventListener('click', function() {
+    document.getElementById('confirmOrderButton')?.addEventListener('click', function () {
 
         const storedData = JSON.parse(localStorage.getItem('cart') || '[]');
 
@@ -222,30 +220,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 total_price: totalPrice
             })
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                var orderSuccessMessage = document.getElementById('orderSuccessMessage');
-                orderSuccessMessage.classList.remove('d-none');
-                orderSuccessMessage.scrollIntoView();
-                // Sepeti temizle
-                localStorage.removeItem('cart');
-                // Sepeti güncelle
-                updateOrderList();
-                setTimeout(() => {
-                    window.location.href = '/user_dashboard';
-                }, 5000);
-            } else {
-                alert('Error placing order: ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    var orderSuccessMessage = document.getElementById('orderSuccessMessage');
+                    orderSuccessMessage.classList.remove('d-none');
+                    orderSuccessMessage.scrollIntoView();
+                    // Sepeti temizle
+                    localStorage.removeItem('cart');
+                    // Sepeti güncelle
+                    updateOrderList();
+                    setTimeout(() => {
+                        window.location.href = '/user_dashboard';
+                    }, 5000);
+                } else {
+                    alert('Error placing order: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     });
 });
 
-document.getElementById('logoutForm').addEventListener('submit', function() {
+document.getElementById('logoutForm').addEventListener('submit', function () {
     localStorage.removeItem('cart');
     updateOrderList();
 });
@@ -258,9 +256,9 @@ function showContent(contentId) {
     document.getElementById(contentId).style.display = 'block';
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var form = document.getElementById('productForm');
-    form.addEventListener('submit', function(event) {
+    form.addEventListener('submit', function (event) {
         event.preventDefault();  // Formun normal submit işlemini engelle
         var formData = new FormData(form);
 
@@ -271,24 +269,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 'X-CSRFToken': formData.get('csrfmiddlewaretoken')
             }
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Modalı kapat ve formu sıfırla
-                var modal = bootstrap.Modal.getInstance(document.getElementById('productModal'));
-                modal.hide();
-                form.reset();
-                // Ürün listesini güncelle (isteğe bağlı)
-                location.reload();  // Tüm sayfayı yenile
-            } else {
-                // Hata mesajını göster
-                alert('Ürün eklenirken bir hata oluştu!');
-            }
-        })
-        .catch(error => {
-            console.error('Hata:', error);
-        });
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Modalı kapat ve formu sıfırla
+                    var modal = bootstrap.Modal.getInstance(document.getElementById('productModal'));
+                    modal.hide();
+                    form.reset();
+                    // Ürün listesini güncelle (isteğe bağlı)
+                    location.reload();  // Tüm sayfayı yenile
+                } else {
+                    // Hata mesajını göster
+                    alert('Ürün eklenirken bir hata oluştu!');
+                }
+            })
+            .catch(error => {
+                console.error('Hata:', error);
+            });
     });
 });
-
 
