@@ -36,14 +36,14 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(default=timezone.now)
-    order_number = models.PositiveIntegerField(null=True, blank=True)  # Sipariş numarası alanı
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')  # Default değer ayarlandı
+    order_number = models.PositiveIntegerField(null=True, blank=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
 
     def __str__(self):
         return f"Order {self.id} by {self.user.username}"
 
     def save(self, *args, **kwargs):
-        if self.pk is None:  # Yeni bir sipariş oluşturuluyorsa
+        if self.pk is None:
             last_order = Order.objects.filter(user=self.user).order_by('-created_at').first()
             if last_order:
                 self.order_number = last_order.order_number + 1
@@ -107,16 +107,17 @@ class PersonalInfo(models.Model):
 
 class Address(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='addresses')
-    city = models.CharField(max_length=100, verbose_name='City')  # Örnek: Balıkesir
-    district = models.CharField(max_length=100, verbose_name='District')  # Örnek: Karesi
-    neighborhood = models.CharField(max_length=100, verbose_name='Neighborhood')  # Örnek: 2.Sakarya Mah.
-    street = models.CharField(max_length=255, verbose_name='Street')  # Örnek: 4020 Sk.
-    building_number = models.CharField(max_length=10, verbose_name='Building Number')  # Örnek: No:55
-    floor = models.CharField(max_length=10, verbose_name='Floor')  # Örnek: Kat:2
+    city = models.CharField(max_length=100, verbose_name='City')
+    district = models.CharField(max_length=100, verbose_name='District')
+    neighborhood = models.CharField(max_length=100, verbose_name='Neighborhood')
+    street = models.CharField(max_length=255, verbose_name='Street')
+    building_number = models.CharField(max_length=10, verbose_name='Building Number')
+    floor = models.CharField(max_length=10, verbose_name='Floor')
     postal_code = models.CharField(max_length=20, verbose_name='Postal Code', blank=True, null=True)
     country = models.CharField(max_length=100, default='Turkey', verbose_name='Country')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        self.country_ = f"{self.building_number}, {self.street}, {self.neighborhood}, {self.district}, {self.city}, {self.country}"
+        self.country_ = (f"{self.building_number}, {self.street}, {self.neighborhood}, {self.district}, {self.city},"
+                         f" {self.country}")
         return self.country_
