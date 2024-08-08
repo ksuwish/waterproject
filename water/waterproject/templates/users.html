@@ -1,0 +1,87 @@
+{% extends "dashboardbase.html" %}
+{% load static %}
+
+{% block content %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-3" href="{% url 'staff_dashboard' %}">Distributor Panel</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="mx-auto d-flex justify-content-center align-items-center">
+                <button class="btn btn-outline-primary m-2 p-2 d-flex align-items-center"
+                        onclick="window.location.href='{% url 'stock_list' %}'">
+                    <i class="bi bi-box-seam fs-4 me-2"></i>
+                    <span class="fs-6">Stock</span>
+                </button>
+
+                <button class="btn btn-outline-primary m-2 p-2 d-flex align-items-center"
+                        onclick="window.location.href='{% url 'last_orders' %}'">
+                    <i class="bi bi-truck fs-4 me-2"></i>
+                    <span class="fs-6">Last Orders</span>
+                </button>
+
+                <button class="btn btn-outline-primary m-2 p-2 d-flex align-items-center"
+                        onclick="window.location.href='{% url 'user_list' %}'">
+                    <i class="bi bi-person fs-4 me-2"></i>
+                    <span class="fs-6">Users</span>
+                </button>
+
+            </div>
+            <div class="d-flex align-items-center">
+                <form action="{% url 'logout' %}" method="post" class="mb-0 ms-3">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-primary">
+                        <i class="bi bi-box-arrow-right"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h1 class="mb-4 d-flex justify-content-between align-items-center">
+            Users
+            <a href="{% url 'add_user' %}" class="btn btn-primary">Add New User</a>
+        </h1>
+
+        <!-- Arama Çubuğu -->
+        <form id="searchForm" class="mb-4">
+            <input type="text" class="form-control" id="searchInput" placeholder="Search by username">
+        </form>
+
+        <div class="user-list-container" style="max-height: 500px; overflow-y: auto;">
+            <div class="row" id="userList">
+                {% for user in users %}
+                    <div class="col-md-2 col-sm-4 col-6 mb-4">
+                        <a href="{% url 'user_detail' user.id %}" class="card list-group-item list-group-item-action">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ user.username }}</h5>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div id="ordersContainer" class="mt-4">
+            <!-- Siparişler burada yüklenecek -->
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('searchInput').addEventListener('input', function () {
+            const filter = this.value.toLowerCase();
+            const items = document.querySelectorAll('#userList .list-group-item');
+            items.forEach(item => {
+                const username = item.textContent.toLowerCase();
+                if (username.includes(filter)) {
+                    item.parentElement.style.display = '';  // Parent element is now the column
+                } else {
+                    item.parentElement.style.display = 'none';
+                }
+            });
+        });
+    </script>
+{% endblock %}

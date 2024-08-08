@@ -1,10 +1,11 @@
 from django.urls import path, include
 from . import views
-from .views import auth_view, CustomLoginView
+from .views import auth_view, CustomLoginView, show_order_map
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import user_orders, create_personal_info, add_address_view
+from .views import user_orders, create_personal_info, add_address_view, mark_order_as_completed, stock_list, \
+    last_orders, user_list
 
 urlpatterns = [
     path("", views.index),
@@ -31,6 +32,12 @@ urlpatterns = [
     path('edit_personal_info/<int:user_id>/', views.edit_personal_info, name='edit_personal_info'),
     path('edit-address/<int:user_id>/<int:address_id>/', views.edit_address, name='edit_address'),
     path('add_user/', views.add_user, name='add_user'),
+    path('mark-order-as-completed/<int:order_id>/', mark_order_as_completed, name='mark_order_as_completed'),
+    path('order/<int:order_id>/map/', show_order_map, name='show_order_map'),
+    path('stock/', stock_list, name='stock_list'),
+    path('last-orders/', last_orders, name='last_orders'),
+    path('users/', user_list, name='user_list'),
+
 ]
 
 if settings.DEBUG:

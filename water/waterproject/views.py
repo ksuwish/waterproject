@@ -148,7 +148,10 @@ def superuser_dashboard(request):
 @staff_or_admin_required
 def staff_dashboard(request):
     # Render the staff dashboard page with access restricted to staff or admin users
-    return render(request, 'dashboard/staff_dashboard.html')
+    pending_orders = Order.objects.filter(status='pending').order_by('-created_at')
+    completed_orders = Order.objects.filter(status='completed').prefetch_related('items', 'user')
+    return render(request, 'dashboard/staff_dashboard.html', {'pending_orders': pending_orders,
+                                                              'completed_orders': completed_orders})
 
 
 @login_required
@@ -400,18 +403,20 @@ def profile_view(request):
     })
 
 
-@admin_required
+@staff_or_admin_required
 def user_detail(request, user_id):
     # Retrieve and display detailed information for a specific user, including personal info, addresses, and orders.
     user = get_object_or_404(User, id=user_id)
     personal_info = get_object_or_404(PersonalInfo, user=user)
     address = Address.objects.filter(user=user)
     orders = Order.objects.filter(user=user).order_by('-created_at')
+    user_role = 'superuser' if request.user.is_superuser else 'staff'
     return render(request, 'user_detail.html', {
         'user': user,
         'personal_info': personal_info,
         'orders': orders,
-        'address': address
+        'address': address,
+        'user_role': user_role
     })
 
 
@@ -473,3 +478,40 @@ def add_user(request):
         address_form = AddressForm()
 
     return render(request, 'add_user.html', {'user_form': user_form, 'address_form': address_form})
+
+
+def mark_order_as_completed(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    if request.method == 'POST':
+        order.status = 'completed'
+        order.save()
+        return redirect('staff_dashboard')  # Güncellenmiş siparişler sayfasına yönlendir
+    return redirect('staff_dashboard')
+
+
+def show_order_map(request, order_id):
+    order = get_object_or_404(Order, pk=order_id)
+    address = Address.objects.filter(user=order.user).first()
+    personal_info = PersonalInfo.objects.filter(user=order.user).first()
+
+    context = {
+        'address': address,
+        'personal_info': personal_info
+    }
+    return render(request, 'address_view.html', context)
+
+
+def stock_list(request):
+    products = Product.objects.all()
+    return render(request, 'stock_list.html', {'products': products})
+
+
+def last_orders(request):
+    # Son siparişleri almak için Order modelini kullan
+    orders = Order.objects.all().order_by('-created_at')
+    return render(request, 'last_orders.html', {'orders': orders})
+
+
+def user_list(request):
+    users = User.objects.filter(is_staff=False)
+    return render(request, 'users.html', {'users': users})

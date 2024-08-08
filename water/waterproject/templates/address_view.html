@@ -1,0 +1,80 @@
+{% extends "dashboardbase.html" %}
+{% load static %}
+
+{% block title %} Order Map {% endblock %}
+
+{% block content %}
+    <div class="container my-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <!-- Back Button -->
+            <a href="{% url 'staff_dashboard' %}" class="btn btn-outline-primary btn-lg">
+                <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+
+        <h2 class="text-center mb-4">Order Map</h2>
+
+        <div id="map" class="mb-4" style="height: 500px;"></div>
+
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>User Details</h4>
+                    </div>
+                    <div class="card-body">
+                        {% if personal_info %}
+                            <ul class="list-unstyled">
+                                <li><strong>Name:</strong> {{ personal_info.name }}</li>
+                                <li><strong>Surname:</strong> {{ personal_info.surname }}</li>
+                                <li><strong>Phone Number:</strong> {{ personal_info.phone }}</li>
+                            </ul>
+                        {% else %}
+                            <p class="text-muted">No personal information available.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Address Information</h4>
+                    </div>
+                    <div class="card-body">
+                        {% if address %}
+                            <ul class="list-unstyled">
+                                <li>
+                                    <strong>Address:</strong> {{ address.country }}, {{ address.city }}, {{ address.district }},
+                                    {{ address.neighborhood }}, {{ address.street }}, {{ address.building_number }}, {{ address.floor }}
+                                </li>
+                            </ul>
+                        {% else %}
+                            <p class="text-muted">No address information available.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet.js -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+    <script>
+        var map = L.map('map').setView([{{ address.latitude|default:"0" }}, {{ address.longitude|default:"0" }}], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        {% if address %}
+            L.marker([{{ address.latitude|default:"0" }}, {{ address.longitude|default:"0" }}]).addTo(map)
+                .bindPopup("<b>Order Address</b><br>{{ address.street }}, {{ address.city }}, {{ address.country }}")
+                .openPopup();
+        {% else %}
+            alert('No address found for this order.');
+        {% endif %}
+    </script>
+{% endblock %}
