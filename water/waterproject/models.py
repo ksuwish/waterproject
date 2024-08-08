@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.conf import settings
 from django.core.validators import RegexValidator
+from geopy.geocoders import Nominatim
+from geopy.exc import GeocoderTimedOut
 
 
 # Create your models here.
@@ -114,10 +116,38 @@ class Address(models.Model):
     building_number = models.CharField(max_length=10, verbose_name='Building Number')
     floor = models.CharField(max_length=10, verbose_name='Floor')
     postal_code = models.CharField(max_length=20, verbose_name='Postal Code', blank=True, null=True)
-    country = models.CharField(max_length=100, default='Turkey', verbose_name='Country')
+    country = models.CharField(max_length=100, default='Türkiye', verbose_name='Country')
+    latitude = models.FloatField(blank=True, null=True)
+    longitude = models.FloatField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        self.country_ = (f"{self.building_number}, {self.street}, {self.neighborhood}, {self.district}, {self.city},"
-                         f" {self.country}")
-        return self.country_
+        return (f"{self.building_number}, {self.street}, {self.neighborhood}, {self.district}, {self.city},"
+                f" {self.country}")
+
+    def save(self, *args, **kwargs):
+        full_address = (f"{self.building_number}, {self.street}, {self.neighborhood}, {self.district},"
+                        f"{self.city}, {self.country}")
+
+        coordinates = self.get_coordinates(full_address)
+
+        if coordinates:
+            self.latitude, self.longitude = coordinates
+        else:
+            print("Could not retrieve coordinates")
+
+        super().save(*args, **kwargs)
+
+    @staticmethod
+    def get_coordinates(address):
+        geolocator = Nominatim(user_agent='ademsevinc82@gmail.com')
+        try:
+            location = geolocator.geocode(address)
+            if location:
+                return location.latitude, location.longitude
+            else:
+                print("Location not found")
+                return None
+        except GeocoderTimedOut:
+            print("Geocoding service timed out. Please try again later.")
+            return None
